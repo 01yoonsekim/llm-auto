@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<!-- saved from url=(0393)file:///Users/yoonsekim/Library/Application%20Support/Claude/local-agent-mode-sessions/7a8274ce-bee9-4f1e-8425-6d9afbb87460/e49636fa-fbc4-403a-adf6-60c8757bcc90/local_975bc7e8-4607-40e5-8e81-d98e8eecc3d5/outputs/LLM_%E1%84%87%E1%85%A1%E1%86%AB%E1%84%87%E1%85%A9%E1%86%A8%E1%84%8C%E1%85%B5%E1%86%AF%E1%84%86%E1%85%AE%E1%86%AB_%E1%84%8C%E1%85%A1%E1%84%83%E1%85%A9%E1%86%BC%E1%84%92%E1%85%AA.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 반복 질문 자동화</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .container { max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; color: #1a1a2e; }
+  .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .card-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 14px;
+  }
+
+  label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 6px; }
+  input[type="text"], input[type="password"], textarea, select {
+    width: 100%;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: #fafafa;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: #6c63ff; background: #fff;
+  }
+  textarea { resize: vertical; min-height: 110px; }
+  .hint { font-size: 0.8rem; color: #999; margin-top: 5px; }
+  .highlight { color: #6c63ff; font-weight: 600; }
+
+  /* ── 프롬프트 라이브러리 ── */
+  .library-section { margin-top: 14px; border-top: 1px solid #f0f0f0; padding-top: 14px; }
+  .library-title {
+    font-size: 0.82rem; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .template-card {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .template-card:hover { border-color: #6c63ff; background: #f7f5ff; }
+  .template-card.active { border-color: #6c63ff; background: #ede9ff; }
+  .template-name {
+    font-size: 0.88rem; font-weight: 600; color: #333; margin-bottom: 4px;
+    padding-right: 22px;
+  }
+  .template-preview {
+    font-size: 0.75rem; color: #999; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .template-del {
+    position: absolute; top: 8px; right: 8px;
+    background: none; border: none; color: #ccc; cursor: pointer;
+    font-size: 0.85rem; line-height: 1; padding: 2px;
+  }
+  .template-del:hover { color: #e53e3e; }
+  .save-row {
+    display: flex; gap: 8px; margin-top: 6px;
+  }
+  .save-row input { flex: 1; }
+  .btn-sm {
+    padding: 8px 14px; border-radius: 8px; font-size: 0.85rem;
+    font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: background 0.2s, opacity 0.2s; border: none;
+  }
+  .btn-save-tpl { background: #6c63ff; color: #fff; }
+  .btn-save-tpl:hover { opacity: 0.88; }
+  .btn-copy-tpl { background: #f0eeff; color: #6c63ff; border: 1.5px solid #d0cbff; }
+  .btn-copy-tpl:hover { background: #e6e0ff; }
+
+  /* ── 키워드 ── */
+  .keyword-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .keyword-row input { flex: 1; }
+  .btn-remove {
+    width: 32px; height: 32px; border: none;
+    background: #fee2e2; color: #e53e3e;
+    border-radius: 6px; cursor: pointer; font-size: 1rem;
+    flex-shrink: 0; transition: background 0.2s;
+  }
+  .btn-remove:hover { background: #fecaca; }
+  .btn-add {
+    background: none; border: 1.5px dashed #6c63ff; color: #6c63ff;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 0.9rem; width: 100%; margin-top: 4px; transition: background 0.2s;
+  }
+  .btn-add:hover { background: #f0eeff; }
+
+  /* ── Run ── */
+  .btn-run {
+    width: 100%; background: linear-gradient(135deg, #6c63ff, #5a52d5);
+    color: #fff; border: none; padding: 14px; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s; margin-top: 8px;
+  }
+  .btn-run:hover { opacity: 0.92; }
+  .btn-run:active { transform: scale(0.99); }
+  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Progress ── */
+  .progress-bar-wrap {
+    background: #e0e0e0; border-radius: 99px; height: 6px;
+    margin: 12px 0 4px; display: none;
+  }
+  .progress-bar {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, #6c63ff, #a78bfa);
+    transition: width 0.4s ease; width: 0%;
+  }
+  .progress-label { font-size: 0.82rem; color: #888; text-align: center; }
+
+  /* ── Results ── */
+  .result-item {
+    border: 1.5px solid #e0e0e0; border-radius: 10px;
+    margin-bottom: 10px; overflow: hidden;
+  }
+  .result-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: #f7f7fb; cursor: pointer;
+    font-weight: 600; font-size: 0.95rem; user-select: none;
+  }
+  .result-header:hover { background: #eeeeff; }
+  .badge {
+    font-size: 0.72rem; padding: 2px 8px; border-radius: 99px;
+    background: #6c63ff; color: white; font-weight: 500;
+  }
+  .badge.err { background: #e53e3e; }
+  .result-body {
+    padding: 16px; white-space: pre-wrap; font-size: 0.9rem;
+    line-height: 1.75; border-top: 1.5px solid #e0e0e0; display: none;
+  }
+  .result-body.open { display: block; }
+  .result-actions {
+    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+  }
+  .btn-copy-result {
+    font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
+    border: 1.5px solid #d0cbff; background: #f0eeff; color: #6c63ff;
+    cursor: pointer; font-weight: 500;
+  }
+  .btn-copy-result:hover { background: #e6e0ff; }
+
+  .btn-save-all {
+    background: #fff; border: 1.5px solid #6c63ff; color: #6c63ff;
+    padding: 10px 20px; border-radius: 8px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 600; width: 100%;
+    margin-top: 8px; transition: background 0.2s;
+  }
+  .btn-save-all:hover { background: #f0eeff; }
+
+  /* toast */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+    background: #333; color: #fff; padding: 10px 20px; border-radius: 8px;
+    font-size: 0.88rem; opacity: 0; transition: all 0.3s; z-index: 999;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🤖 LLM 반복 질문 자동화</h1>
+  <p class="subtitle">키워드만 바꿔서 Claude에게 같은 형태의 질문을 자동으로 보냅니다.</p>
+
+  <!-- ① API Key -->
+  <div class="card">
+    <div class="card-title">① Anthropic API 키</div>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+    <p class="hint">
+      키가 없으시면 →
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#6c63ff">console.anthropic.com</a>
+      에서 발급 받으세요. 키는 브라우저 밖으로 전송되지 않습니다.
+    </p>
+  </div>
+
+  <!-- ② Model -->
+  <div class="card">
+    <div class="card-title">② 모델 선택</div>
+    <select id="model">
+      <option value="claude-haiku-4-5-20251001">Claude Haiku — 빠르고 저렴 (추천)</option>
+      <option value="claude-sonnet-4-6">Claude Sonnet — 균형잡힌 성능</option>
+      <option value="claude-opus-4-6">Claude Opus — 가장 정확, 비용 높음</option>
+    </select>
+  </div>
+
+  <!-- ③ Prompt Template + Library -->
+  <div class="card">
+    <div class="card-title">③ 질문 템플릿</div>
+    <label>바뀌는 부분은 <span class="highlight">{keyword}</span> 로 표시하세요.</label>
+    <textarea id="prompt">{keyword}에 대해 다음 항목을 한국어로 간결하게 알려줘:
+1. 핵심 개념 (3줄 이내)
+2. 주요 특징 3가지
+3. 실제 활용 예시</textarea>
+    <p class="hint">예: <em>"{keyword}의 장단점 5가지 알려줘"</em> &nbsp;/&nbsp; <em>"{keyword} 마케팅 전략 제안해줘"</em></p>
+
+    <!-- ── 템플릿 라이브러리 ── -->
+    <div class="library-section">
+      <div class="library-title">📋 저장된 템플릿</div>
+      <div class="template-grid" id="templateGrid"><p style="font-size:0.82rem;color:#bbb;">아직 저장된 템플릿이 없습니다.</p></div>
+      <div class="save-row">
+        <input type="text" id="tplName" placeholder="템플릿 이름 (예: 개념 설명용)">
+        <button class="btn-sm btn-save-tpl" onclick="saveTemplate()">💾 저장</button>
+        <button class="btn-sm btn-copy-tpl" onclick="copyPrompt()">📋 복사</button>
+      </div>
+      <div class="save-row" style="margin-top:8px;">
+        <button class="btn-sm" style="flex:1;background:#f0fdf4;color:#16a34a;border:1.5px solid #bbf7d0;" onclick="exportTemplates()">📤 템플릿 파일로 내보내기</button>
+        <label class="btn-sm" style="flex:1;background:#eff6ff;color:#2563eb;border:1.5px solid #bfdbfe;text-align:center;cursor:pointer;margin:0;">
+          📥 템플릿 파일 불러오기
+          <input type="file" accept=".json" id="importFile" style="display:none;" onchange="importTemplates(event)">
+        </label>
+      </div>
+      <p class="hint" style="margin-top:6px;">💡 템플릿을 저장한 뒤 <strong>내보내기</strong>로 파일을 보관하세요. 다음에 열 때 <strong>불러오기</strong>로 복원할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <!-- ④ Keywords -->
+  <div class="card">
+    <div class="card-title">④ 키워드 목록</div>
+    <div id="keywordList">
+      <div class="keyword-row">
+        <input type="text" placeholder="키워드 입력" value="머신러닝">
+        <button class="btn-remove" onclick="removeKeyword(this)">✕</button>
+      </div>
+      <div class="keyword-row">
+        <input type="text" placeholder="키워드 입력" value="딥러닝">
+        <button class="btn-remove" onclick="removeKeyword(this)">✕</button>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addKeyword()">+ 키워드 추가</button>
+  </div>
+
+  <!-- Run -->
+  <button class="btn-run" id="runBtn" onclick="runAll()">▶ 질문 시작</button>
+
+  <!-- Progress -->
+  <div class="progress-bar-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <p class="progress-label" id="progressLabel"></p>
+
+  <!-- Results -->
+  <div id="resultSection" style="display:none; margin-top:24px;">
+    <div class="card" style="padding-bottom:8px;">
+      <div class="card-title">결과</div>
+      <div id="resultList"></div>
+      <button class="btn-save-all" onclick="saveAllResults()">📥 전체 결과 파일로 저장</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ── 토스트 ──
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  // ── 템플릿 라이브러리 (localStorage) ──
+  const STORAGE_KEY = 'llm_templates';
+
+  function loadTemplates() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch(e) { return []; }
+  }
+  function storeTemplates(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  function renderTemplates() {
+    const grid = document.getElementById('templateGrid');
+    const templates = loadTemplates();
+    if (templates.length === 0) {
+      grid.innerHTML = '<p style="font-size:0.82rem;color:#bbb;">아직 저장된 템플릿이 없습니다.</p>';
+      return;
+    }
+    grid.innerHTML = templates.map((t, i) => `
+      <div class="template-card" id="tcard-${i}" onclick="loadTemplate(${i})">
+        <button class="template-del" onclick="deleteTemplate(event,${i})">✕</button>
+        <div class="template-name">${escapeHtml(t.name)}</div>
+        <div class="template-preview">${escapeHtml(t.body)}</div>
+      </div>
+    `).join('');
+  }
+
+  function saveTemplate() {
+    const name = document.getElementById('tplName').value.trim();
+    const body = document.getElementById('prompt').value.trim();
+    if (!name) { alert('템플릿 이름을 입력해주세요.'); return; }
+    if (!body)  { alert('템플릿 내용이 비어있습니다.'); return; }
+    const arr = loadTemplates();
+    // 같은 이름 덮어쓰기
+    const idx = arr.findIndex(t => t.name === name);
+    if (idx >= 0) arr[idx].body = body;
+    else arr.push({ name, body });
+    storeTemplates(arr);
+    renderTemplates();
+    document.getElementById('tplName').value = '';
+    toast(`✅ "${name}" 저장 완료`);
+  }
+
+  function loadTemplate(i) {
+    const arr = loadTemplates();
+    if (!arr[i]) return;
+    document.getElementById('prompt').value = arr[i].body;
+    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+    document.getElementById(`tcard-${i}`)?.classList.add('active');
+    toast(`📋 "${arr[i].name}" 불러옴`);
+  }
+
+  function deleteTemplate(e, i) {
+    e.stopPropagation();
+    const arr = loadTemplates();
+    const name = arr[i]?.name || '';
+    if (!confirm(`"${name}" 템플릿을 삭제할까요?`)) return;
+    arr.splice(i, 1);
+    storeTemplates(arr);
+    renderTemplates();
+    toast('🗑️ 삭제됨');
+  }
+
+  function copyPrompt() {
+    const text = document.getElementById('prompt').value;
+    if (!text) { toast('복사할 내용이 없습니다.'); return; }
+    navigator.clipboard.writeText(text).then(() => toast('📋 클립보드에 복사됨'));
+  }
+
+  // ── 키워드 관리 ──
+  function addKeyword() {
+    const list = document.getElementById('keywordList');
+    const row = document.createElement('div');
+    row.className = 'keyword-row';
+    row.innerHTML = `
+      <input type="text" placeholder="키워드 입력">
+      <button class="btn-remove" onclick="removeKeyword(this)">✕</button>
+    `;
+    list.appendChild(row);
+    row.querySelector('input').focus();
+  }
+
+  function removeKeyword(btn) {
+    if (document.querySelectorAll('.keyword-row').length <= 1) {
+      alert('키워드가 최소 1개는 있어야 합니다.'); return;
+    }
+    btn.parentElement.remove();
+  }
+
+  function getKeywords() {
+    return [...document.querySelectorAll('#keywordList input')]
+      .map(i => i.value.trim()).filter(Boolean);
+  }
+
+  // ── Claude 호출 ──
+  async function queryOpenAI(apiKey, model, prompt) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 8096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data.content[0].text.trim();
+  }
+
+  // ── 결과 카드 ──
+  function toggleResult(el) {
+    el.nextElementSibling.classList.toggle('open');
+  }
+
+  function copyResult(btn) {
+    const text = btn.closest('.result-body').querySelector('.answer-text').textContent;
+    navigator.clipboard.writeText(text).then(() => toast('📋 복사됨'));
+  }
+
+  function addResultCard(keyword, text, isError) {
+    const list = document.getElementById('resultList');
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = `
+      <div class="result-header" onclick="toggleResult(this)">
+        <span>🔹 ${escapeHtml(keyword)}</span>
+        <span class="badge ${isError ? 'err' : ''}">${isError ? '오류' : '완료'}</span>
+      </div>
+      <div class="result-body open">
+        <span class="answer-text">${isError ? '❌ ' : ''}${escapeHtml(text)}</span>
+        <div class="result-actions">
+          <button class="btn-copy-result" onclick="copyResult(this)">📋 복사</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(item);
+  }
+
+  // ── 메인 실행 ──
+  let allResults = [];
+
+  async function runAll() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const model  = document.getElementById('model').value;
+    const tmpl   = document.getElementById('prompt').value.trim();
+    const keywords = getKeywords();
+
+    if (!apiKey) { alert('API 키를 입력해주세요.'); return; }
+    if (!tmpl.includes('{keyword}')) { alert('템플릿에 {keyword} 가 포함되어야 합니다.'); return; }
+    if (!keywords.length) { alert('키워드를 최소 1개 입력해주세요.'); return; }
+
+    const btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ 처리 중...';
+    document.getElementById('resultSection').style.display = 'block';
+    document.getElementById('resultList').innerHTML = '';
+    document.getElementById('progressWrap').style.display = 'block';
+    allResults = [];
+
+    for (let i = 0; i < keywords.length; i++) {
+      const kw = keywords[i];
+      document.getElementById('progressBar').style.width = (i / keywords.length * 100) + '%';
+      document.getElementById('progressLabel').textContent = `[${i+1}/${keywords.length}] "${kw}" 처리 중...`;
+
+      try {
+        const answer = await queryOpenAI(apiKey, model, tmpl.replace(/\{keyword\}/g, kw));
+        allResults.push({ keyword: kw, answer, error: false });
+        addResultCard(kw, answer, false);
+      } catch(e) {
+        allResults.push({ keyword: kw, answer: e.message, error: true });
+        addResultCard(kw, e.message, true);
+      }
+    }
+
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('progressLabel').textContent =
+      `✅ 완료! ${allResults.filter(r => !r.error).length}/${keywords.length}개 성공`;
+    btn.disabled = false;
+    btn.textContent = '▶ 다시 실행';
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── 저장 ──
+  function saveAllResults() {
+    if (!allResults.length) { alert('먼저 질문을 실행해주세요.'); return; }
+    const now = new Date().toLocaleString('ko-KR');
+    let text = `# LLM 반복 질문 결과\n생성 일시: ${now}\n\n${'='.repeat(50)}\n\n`;
+    allResults.forEach(r => {
+      text += `## ${r.keyword}\n\n${r.answer}\n\n${'='.repeat(50)}\n\n`;
+    });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' })),
+      download: `결과_${new Date().toISOString().slice(0,10)}.txt`
+    });
+    a.click();
+    toast('📥 파일 저장 완료');
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── 템플릿 내보내기 ──
+  function exportTemplates() {
+    const arr = loadTemplates();
+    if (!arr.length) { alert('저장된 템플릿이 없습니다.'); return; }
+    const blob = new Blob([JSON.stringify(arr, null, 2)], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: '템플릿_백업.json'
+    });
+    a.click();
+    toast('📤 템플릿 파일 저장됨');
+  }
+
+  // ── 템플릿 불러오기 ──
+  function importTemplates(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const arr = JSON.parse(ev.target.result);
+        if (!Array.isArray(arr)) throw new Error();
+        const existing = loadTemplates();
+        // 이름 중복은 덮어쓰기
+        arr.forEach(t => {
+          const idx = existing.findIndex(e => e.name === t.name);
+          if (idx >= 0) existing[idx] = t;
+          else existing.push(t);
+        });
+        storeTemplates(existing);
+        renderTemplates();
+        toast(`✅ ${arr.length}개 템플릿 불러옴`);
+      } catch {
+        alert('올바른 템플릿 파일이 아닙니다.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  // ── 초기화 ──
+  renderTemplates();
+</script>
+
+
+</body></html>
