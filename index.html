@@ -166,20 +166,43 @@
     display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
     border-top: 1px solid #f0f0f0;
   }
+  .result-actions { flex-wrap: wrap; }
   .btn-copy-result {
     font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
     border: 1.5px solid #d0cbff; background: #f0eeff; color: #6c63ff;
     cursor: pointer; font-weight: 500;
   }
   .btn-copy-result:hover { background: #e6e0ff; }
+  .btn-dl-txt {
+    font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
+    border: 1.5px solid #d1fae5; background: #f0fdf4; color: #16a34a;
+    cursor: pointer; font-weight: 500;
+  }
+  .btn-dl-txt:hover { background: #dcfce7; }
+  .btn-dl-word {
+    font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
+    border: 1.5px solid #bfdbfe; background: #eff6ff; color: #2563eb;
+    cursor: pointer; font-weight: 500;
+  }
+  .btn-dl-word:hover { background: #dbeafe; }
 
+  .save-all-row {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
   .btn-save-all {
     background: #fff; border: 1.5px solid #6c63ff; color: #6c63ff;
     padding: 10px 20px; border-radius: 8px; cursor: pointer;
-    font-size: 0.9rem; font-weight: 600; width: 100%;
-    margin-top: 8px; transition: background 0.2s;
+    font-size: 0.9rem; font-weight: 600; flex: 1;
+    transition: background 0.2s;
   }
   .btn-save-all:hover { background: #f0eeff; }
+  .btn-save-all-word {
+    background: #fff; border: 1.5px solid #2563eb; color: #2563eb;
+    padding: 10px 20px; border-radius: 8px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 600; flex: 1;
+    transition: background 0.2s;
+  }
+  .btn-save-all-word:hover { background: #eff6ff; }
 
   /* toast */
   #toast {
@@ -277,7 +300,10 @@
     <div class="card" style="padding-bottom:8px;">
       <div class="card-title">결과</div>
       <div id="resultList"></div>
-      <button class="btn-save-all" onclick="saveAllResults()">📥 전체 결과 파일로 저장</button>
+      <div class="save-all-row">
+        <button class="btn-save-all" onclick="saveAllResults()">📥 전체 TXT 저장</button>
+        <button class="btn-save-all-word" onclick="saveAllAsWord()">📝 전체 Word 저장</button>
+      </div>
     </div>
   </div>
 </div>
@@ -421,19 +447,61 @@
     navigator.clipboard.writeText(text).then(() => toast('📋 복사됨'));
   }
 
+  function dlTxt(btn) {
+    const body = btn.closest('.result-body');
+    const keyword = body.closest('.result-item').querySelector('.result-keyword').textContent;
+    const text = body.querySelector('.answer-text').textContent;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: `${keyword}.txt`
+    });
+    a.click();
+    toast('📄 TXT 저장됨');
+  }
+
+  function dlWord(btn) {
+    const body = btn.closest('.result-body');
+    const keyword = body.closest('.result-item').querySelector('.result-keyword').textContent;
+    const text = body.querySelector('.answer-text').textContent;
+    saveWordFile(keyword, text);
+  }
+
+  function saveWordFile(keyword, text) {
+    const lines = text.split('\n').map(l => `<p style="margin:0 0 6pt 0;">${escapeHtml(l) || '&nbsp;'}</p>`).join('');
+    const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>${escapeHtml(keyword)}</title>
+      <style>
+        body { font-family: '맑은 고딕', 'Malgun Gothic', sans-serif; font-size: 11pt; line-height: 1.8; margin: 2cm; }
+        h1 { font-size: 15pt; border-bottom: 1px solid #ccc; padding-bottom: 6pt; }
+      </style></head>
+      <body><h1>${escapeHtml(keyword)}</h1>${lines}</body></html>`;
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: `${keyword}.doc`
+    });
+    a.click();
+    toast('📝 Word 저장됨');
+  }
+
   function addResultCard(keyword, text, isError) {
     const list = document.getElementById('resultList');
     const item = document.createElement('div');
     item.className = 'result-item';
     item.innerHTML = `
       <div class="result-header" onclick="toggleResult(this)">
-        <span>🔹 ${escapeHtml(keyword)}</span>
+        <span>🔹 <span class="result-keyword">${escapeHtml(keyword)}</span></span>
         <span class="badge ${isError ? 'err' : ''}">${isError ? '오류' : '완료'}</span>
       </div>
       <div class="result-body open">
         <span class="answer-text">${isError ? '❌ ' : ''}${escapeHtml(text)}</span>
-        <div class="result-actions">
+        <div class="result-actions" style="margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn-copy-result" onclick="copyResult(this)">📋 복사</button>
+          ${!isError ? `<button class="btn-dl-txt" onclick="dlTxt(this)">📄 TXT 저장</button>` : ''}
+          ${!isError ? `<button class="btn-dl-word" onclick="dlWord(this)">📝 Word 저장</button>` : ''}
         </div>
       </div>
     `;
@@ -484,7 +552,33 @@
     document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // ── 저장 ──
+  // ── 전체 Word 저장 ──
+  function saveAllAsWord() {
+    if (!allResults.length) { alert('먼저 질문을 실행해주세요.'); return; }
+    const now = new Date().toLocaleString('ko-KR');
+    let body = '';
+    allResults.filter(r => !r.error).forEach(r => {
+      const lines = r.answer.split('\n').map(l => `<p style="margin:0 0 6pt 0;">${escapeHtml(l) || '&nbsp;'}</p>`).join('');
+      body += `<h1 style="font-size:15pt;border-bottom:1px solid #ccc;padding-bottom:6pt;margin-top:24pt;">${escapeHtml(r.keyword)}</h1>${lines}<br>`;
+    });
+    const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word'
+      xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>전체 결과</title>
+      <style>
+        body { font-family: '맑은 고딕', 'Malgun Gothic', sans-serif; font-size: 11pt; line-height: 1.8; margin: 2cm; }
+      </style></head>
+      <body><p style="color:#999;font-size:9pt;">생성 일시: ${now}</p>${body}</body></html>`;
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: `전체결과_${new Date().toISOString().slice(0,10)}.doc`
+    });
+    a.click();
+    toast('📝 전체 Word 저장됨');
+  }
+
+  // ── 전체 TXT 저장 ──
   function saveAllResults() {
     if (!allResults.length) { alert('먼저 질문을 실행해주세요.'); return; }
     const now = new Date().toLocaleString('ko-KR');
