@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0393)file:///Users/yoonsekim/Library/Application%20Support/Claude/local-agent-mode-sessions/7a8274ce-bee9-4f1e-8425-6d9afbb87460/e49636fa-fbc4-403a-adf6-60c8757bcc90/local_975bc7e8-4607-40e5-8e81-d98e8eecc3d5/outputs/LLM_%E1%84%87%E1%85%A1%E1%86%AB%E1%84%87%E1%85%A9%E1%86%A8%E1%84%8C%E1%85%B5%E1%86%AF%E1%84%86%E1%85%AE%E1%86%AB_%E1%84%8C%E1%85%A1%E1%84%83%E1%85%A9%E1%86%BC%E1%84%92%E1%85%AA.html -->
+<!-- saved from url=(0222)file:///Users/yoonsekim/Library/Application%20Support/Claude/local-agent-mode-sessions/7a8274ce-bee9-4f1e-8425-6d9afbb87460/e49636fa-fbc4-403a-adf6-60c8757bcc90/local_975bc7e8-4607-40e5-8e81-d98e8eecc3d5/outputs/index.html -->
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -204,6 +204,123 @@
   }
   .btn-save-all-word:hover { background: #eff6ff; }
 
+  /* ── 탭 ── */
+  .tab-bar {
+    display: flex; gap: 4px; margin-bottom: 20px;
+    background: #fff; border-radius: 10px; padding: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .tab-btn {
+    flex: 1; padding: 10px; border: none; background: none;
+    border-radius: 8px; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; color: #999; transition: all 0.2s;
+  }
+  .tab-btn.active { background: #6c63ff; color: #fff; }
+  .tab-btn:not(.active):hover { background: #f0eeff; color: #6c63ff; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── 히스토리 게시판 ── */
+  .history-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  .history-count { font-size: 0.85rem; color: #888; }
+  .btn-clear-history {
+    font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
+    border: 1.5px solid #fee2e2; background: #fff5f5; color: #e53e3e;
+    cursor: pointer; font-weight: 500;
+  }
+  .btn-clear-history:hover { background: #fee2e2; }
+  .history-empty {
+    text-align: center; padding: 48px 0; color: #bbb; font-size: 0.9rem;
+  }
+  .history-item {
+    border: 1.5px solid #e0e0e0; border-radius: 10px;
+    margin-bottom: 10px; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .history-item:hover { border-color: #c4b5fd; }
+  .history-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: #fafafa; cursor: pointer;
+    user-select: none;
+  }
+  .history-header:hover { background: #f0eeff; }
+  .history-meta { display: flex; align-items: center; gap: 10px; }
+  .history-date {
+    font-size: 0.75rem; background: #ede9ff; color: #6c63ff;
+    padding: 2px 8px; border-radius: 99px; font-weight: 600; white-space: nowrap;
+  }
+  .history-keyword { font-size: 0.95rem; font-weight: 600; color: #1a1a2e; }
+  .history-preview {
+    font-size: 0.78rem; color: #aaa; margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 380px;
+  }
+  .history-body {
+    padding: 16px; white-space: pre-wrap; font-size: 0.9rem;
+    line-height: 1.75; border-top: 1.5px solid #e0e0e0; display: none;
+  }
+  .history-body.open { display: block; }
+  .history-actions {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f0f0;
+  }
+  .btn-del-history {
+    font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
+    border: 1.5px solid #fee2e2; background: #fff5f5; color: #e53e3e;
+    cursor: pointer; font-weight: 500; margin-left: auto;
+  }
+  .btn-del-history:hover { background: #fee2e2; }
+  .btn-edit-history {
+    font-size: 0.8rem; padding: 5px 10px; border-radius: 6px;
+    border: 1.5px solid #fed7aa; background: #fff7ed; color: #ea580c;
+    cursor: pointer; font-weight: 500;
+  }
+  .btn-edit-history:hover { background: #ffedd5; }
+  .reviewer-badge {
+    font-size: 0.72rem; padding: 2px 8px; border-radius: 99px;
+    background: #fef3c7; color: #d97706; font-weight: 600;
+    border: 1px solid #fde68a;
+  }
+  .edited-badge {
+    font-size: 0.7rem; color: #aaa; margin-left: 4px;
+  }
+  /* 편집 패널 */
+  .edit-panel {
+    display: none; border-top: 2px dashed #6c63ff;
+    background: #fafafa; padding: 16px;
+  }
+  .edit-panel.open { display: block; }
+  .edit-panel textarea {
+    width: 100%; min-height: 320px; font-size: 0.9rem;
+    line-height: 1.75; border: 1.5px solid #c4b5fd;
+    border-radius: 8px; padding: 12px; background: #fff;
+    font-family: inherit; resize: vertical;
+  }
+  .edit-panel textarea:focus { outline: none; border-color: #6c63ff; }
+  .edit-footer {
+    display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap;
+  }
+  .edit-footer input[type="text"] {
+    flex: 1; min-width: 140px; font-size: 0.88rem;
+    border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 7px 12px;
+    background: #fff; font-family: inherit;
+  }
+  .btn-save-edit {
+    padding: 8px 16px; border-radius: 8px; border: none;
+    background: #6c63ff; color: #fff; font-size: 0.88rem;
+    font-weight: 600; cursor: pointer;
+  }
+  .btn-save-edit:hover { opacity: 0.88; }
+  .btn-cancel-edit {
+    padding: 8px 14px; border-radius: 8px;
+    border: 1.5px solid #e0e0e0; background: #fff; color: #888;
+    font-size: 0.88rem; cursor: pointer;
+  }
+  .btn-cancel-edit:hover { background: #f5f5f5; }
+
   /* toast */
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
@@ -219,10 +336,19 @@
   <h1>🤖 LLM 반복 질문 자동화</h1>
   <p class="subtitle">키워드만 바꿔서 Claude에게 같은 형태의 질문을 자동으로 보냅니다.</p>
 
+  <!-- 탭 네비게이션 -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-gen" onclick="switchTab(&#39;gen&#39;)">✏️ 질문 생성</button>
+    <button class="tab-btn" id="tab-history" onclick="switchTab(&#39;history&#39;)">📋 히스토리</button>
+  </div>
+
+  <!-- 질문 생성 탭 -->
+  <div class="tab-panel active" id="panel-gen">
+
   <!-- ① API Key -->
   <div class="card">
     <div class="card-title">① Anthropic API 키</div>
-    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" oninput="saveApiKey()">
     <p class="hint">
       키가 없으시면 →
       <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#6c63ff">console.anthropic.com</a>
@@ -253,7 +379,215 @@
     <!-- ── 템플릿 라이브러리 ── -->
     <div class="library-section">
       <div class="library-title">📋 저장된 템플릿</div>
-      <div class="template-grid" id="templateGrid"><p style="font-size:0.82rem;color:#bbb;">아직 저장된 템플릿이 없습니다.</p></div>
+      <div class="template-grid" id="templateGrid">
+      <div class="template-card" id="tcard-0" onclick="loadTemplate(0)">
+        <button class="template-del" onclick="deleteTemplate(event,0)">✕</button>
+        <div class="template-name">기본</div>
+        <div class="template-preview">단계 1에서 추출한 keyword를 프롬프트 {keyword}란에 입력
+==================
+◆ 프롬프트
+
+너는 건강·영양 전문 정보 콘텐츠를 작성하는 시니어 메인 에디터다.
+입력된 keyword 1개 바탕으로, 건강 정보형 기사 스타일과 전문 블로그 리포트 스타일이 결합된 글을 작성해라.
+글은 대중이 이해하기 쉬우면서도 전문가가 작성한 것처럼 신뢰감 있는 문체로 작성한다.
+
+[입력 keyword] : {keyword}
+
+이 keyword 는 다음 중 하나라고 가정한다.
+건강기능식품 성분/영양 성분/식품/질환
+────────────────
+[콘텐츠 스타일 선택]
+작성할 글은 아래 keyword에 따라 4가지 스타일 중 하나를 선택해 작성한다.
+
+스타일 선택 기준
+- 식품 → 리스트형 또는 비교형
+- 영양 성분/건강기능식품 → 과학 기전 설명형
+- 질환 → 질환 경고 / 관리형 또는 리스트형
+
+- 리스트형 건강 정보: keyword에 대한 내용을 “○가지” 형태로 정리
+예: 의외로 단백질 많은 식품 7가지
+- 비교 분석형: 두가지 이상의 식품, 성분 또는 섭취 방법을 비교
+예: 고구마 vs 감자, 어떤 것이 혈당에 더 좋을까
+- 과학 기전 설명형: 특정 성분이나 식품의 작용 기전, 흡수율, 생리 작용을 설명
+예: 비타민D가 면역에 중요한 이유
+- 질환 경고 / 관리형: 질환의 위험 요인, 잘못된 습관, 관리 방법을 설명
+예: 내장지방 늘리는 습관
+────────────────
+[글 구조]
+반드시 아래 순서를 지킨다.
+1. 제목
+2. 시작 고정멘트
+3. 도입부
+4. 연구 소개
+5. 본문
+6. 이미지 제안
+7. (질환 keyword일 경우) 함께 주목할 수 있는 영양성분
+8. 마무리
+9. 끝 고정멘트
+────────────────
+[SEO keyword 규칙]
+입력 keyword는 글 전체에서 자연스럽게 4~7회 등장
+규칙
+•	제목에 1회 포함
+•	도입부에 최소 1회 포함
+•	본문 소제목 또는 내용에 자연스럽게 포함
+•	마무리 문단에 가능하면 1회 포함
+주의
+•	keyword를 억지로 반복하지 않는다.
+•	문맥에 맞게 자연스럽게 사용한다.
+────────────────
+[제목 규칙]
+제목은 반드시 아래 규칙을 따른다.
+1. 의외성 또는 반전 표현
+2. “…” 말줄임표
+3. 숫자 정보
+4. 독자의 문제 인식 또는 궁금증 자극
+
+예시
+패턴 1 : “좋은 줄 알았는데…” ○○에 주의해야 할 ○가지
+패턴 2 : “○○보다 많다…” 의외로 ○○한 ○가지
+패턴 3 : “○○ 때문이라 생각했는데…” 놓치기 쉬운 핵심 포인트 ○가지
+패턴 4 : “많이 먹어도 소용없다?” ○○의 진짜 기준
+패턴 5 : “○○라면 꼭 알아야 할…” 전문가들이 말하는 핵심 포인트 ○가지
+───────────────
+[고정 멘트]
+글 시작 고정 멘트
+"본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련 판단은 전문 의료인과 상담하세요."
+
+글 마무리 고정 멘트
+"— The Healthy Reporter 메인 에디터"
+────────────────
+[도입부 작성 규칙]
+도입부는 2개 문단으로 작성하며, 학술적으로 어렵게 쓰지 않는다.
+
+첫 문단
+- 사람들이 흔히 알고 있는 상식이나 익숙한 인식을 먼저 제시
+- 과장 없이 공감 가능한 문제
+
+둘째 문단
+- “하지만”, “그러나”, “의외로”, “반면” 등을 사용해 반전 포인트
+- 이 keyword가 왜 중요한지 건강 관점에서 설명
+────────────────
+[연구 소개]
+도입부 뒤에 관련 연구를 3~4개 소개한다.
+형식
+관련 연구
+1.	논문 제목 — 저널, 연도
+2.	논문 제목 — 저널, 연도
+3.	논문 제목 — 저널, 연도
+4.	논문 제목 — 저널, 연도
+DOI는 생략한다.
+────────────────
+[본문 작성 규칙]
+- keyword에 따라 5~7개 리스트형 또는 3~5개 핵심 포인트형(질환, 특정 성분 소개하는 내용의 경우)으로 구성
+- 독자가 궁금해할 질문 또는 핵심 포인트 형태를 번호형 소제목으로 구성
+- 각 항목은 3~5문장 내외
+
+각 항목에는 다음 내용을 포함
+- 개념/정의
+- 특징
+- 건강상 의미
+- 주의점 또는 실천 팁
+────────────────
+[keyword 유형별 작성 기준]
+건강기능식품 성분
+- 작용 기전
+- 기대 효능
+- 어떤 사람에게 도움이 되는지
+- 섭취 시 주의점
+
+영양 성분
+- 어떤 식품에 많은지
+- 체내 역할
+- 부족 또는 과잉 시 문제
+- 섭취 팁
+
+식품
+- 영양 특징
+- 건강상 장점과 한계
+- 섭취 방법
+
+질환
+- 증상 특징
+- 관리 포인트
+- 도움 되는 식품 또는 습관
+- 주의해야 할 생활 습관
+────────────────
+[이미지 제안 규칙]
+본문 흐름에 맞는 이미지 최대 2~3개 제안
+
+규칙
+- 질환 keyword: 증상 공감형 + 관리 식품/생활습관 이미지
+- 식품 keyword: 식품 실사 이미지
+- 영양 성분/건강기능식품 성분 keyword: 식품 원재료, 섭취 장면, 건강한 일상 이미지
+- 논문 속 분자 구조, 캡슐 단면도, 의학 포스터 같은 과도한 학술 그래픽, 인포그래픽은 지양
+
+이미지 톤
+- 추구: 자연스럽고 담백한 건강 정보 콘텐츠 느낌, 본문에 어울리는 현실적이고 정제된 비주얼
+- 지양: 상업 광고 느낌, 과장된 의료 광고 이미지, 인위적인 미소를 짓는 모델
+- 필요 시 일러스트형 또는 실사형 중 더 적합한 방향 선택
+
+형식
+이미지 제안 #
+위치: 도입부 뒤 / 본문 중간 / 마무리 전
+용도: 공감형 / 식품 / 성분 / 생활습관 / 건강 개념 
+설명: 본문 흐름과 어떻게 연결되는지 한 줄 설명
+AI 이미지 프롬프트(영어)
+- 너무 길지 않게, 한 줄 또는 두 줄 정도로
+- 다음 톤을 기본 반영
+  Natural lighting, candid, minimalist, soft tones, high-quality texture, editorial health blog style, realistic, non-commercial
+────────────────
+[질환 keyword 추가 규칙]
+입력 keyword가 질환일 경우
+마무리 요약 문단 바로 앞에 아래 정보를 추가한다.
+
+“함께 주목할 수 있는 영양 성분”
+해당 질환과 관련된 영양 성분 또는 기능성 성분을 3~5개 간단히 소개
+
+작성 방식
+- 성분 이름 + 1~2문장 설명
+- 해당 질환과 생리적으로 관련된 작용 중심 설명
+- 치료 효과처럼 단정하지 않는다
+- 표현 예시
+~와 관련된 연구가 보고된 바 있다/~에 도움을 줄 수 있다/~과 관련된 기능으로 알려져 있다
+────────────────
+[문체 규칙]
+기사형 표현 사용
+- ~로 알려져 있다
+- ~로 나타났다
+- ~할 수 있다
+- ~라고 설명한다
+- ~로 보고된다
+- ~에 도움이 될 수 있다
+
+원칙
+- 짧고 명확한 문장
+- 2~3줄마다 문단 구분
+- 모바일 가독성 고려
+
+금지 표현
+충격 / 무조건 / 완치 / 대박 / 반드시 먹어야 한다 / 인생템 / 추천 제품 / 자사 / 우리 제품
+────────────────
+[전문 용어 설명]
+전문 용어는 필요한 경우에만 사용하며, 쉽게 풀어줌
+
+예
+생체이용률 = 몸에서 실제로 활용되는 비율
+항산화 = 세포 손상을 줄이는 작용
+────────────────
+[마무리 문단]
+- 전체 내용을 3~4문장으로 요약
+- 특정 성분이나 식품 하나만 맹신하지 말고 균형 잡힌 식단과 생활 습관이 중요하다는 메시지
+────────────────
+[형식 규칙]
+- 전체 글 길이 약 1800~2500자
+- 핵심 문장은 필요 시 굵게(Bold) 표시 가능
+- 과도한 표, 이모지, 감탄문 금지
+────────────────
+[최종 작업]
+입력 keyword { keyword }를 바탕으로 위 조건을 충족하는 건강 정보 글을 작성한다.</div>
+      </div>
+    </div>
       <div class="save-row">
         <input type="text" id="tplName" placeholder="템플릿 이름 (예: 개념 설명용)">
         <button class="btn-sm btn-save-tpl" onclick="saveTemplate()">💾 저장</button>
@@ -305,7 +639,22 @@
         <button class="btn-save-all-word" onclick="saveAllAsWord()">📝 전체 Word 저장</button>
       </div>
     </div>
-  </div>
+  </div><!-- end panel-gen -->
+
+  <!-- 히스토리 탭 -->
+  <div class="tab-panel" id="panel-history">
+    <div class="card">
+      <div class="history-toolbar">
+        <div>
+          <div class="card-title" style="margin-bottom:2px;">📋 생성 히스토리</div>
+          <div class="history-count" id="historyCount"></div>
+        </div>
+        <button class="btn-clear-history" onclick="clearHistory()">🗑️ 전체 삭제</button>
+      </div>
+      <div id="historyList"></div>
+    </div>
+  </div><!-- end panel-history -->
+
 </div>
 
 <div id="toast"></div>
@@ -538,6 +887,7 @@
         const answer = await queryOpenAI(apiKey, model, tmpl.replace(/\{keyword\}/g, kw));
         allResults.push({ keyword: kw, answer, error: false });
         addResultCard(kw, answer, false);
+        saveToHistory(kw, answer);
       } catch(e) {
         allResults.push({ keyword: kw, answer: e.message, error: true });
         addResultCard(kw, e.message, true);
@@ -640,9 +990,172 @@
     e.target.value = '';
   }
 
+  // ── 탭 전환 ──
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    if (tab === 'history') renderHistory();
+  }
+
+  // ── 히스토리 저장소 ──
+  const HISTORY_KEY = 'llm_history';
+
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+    catch(e) { return []; }
+  }
+  function storeHistory(arr) {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+  }
+  function saveToHistory(keyword, content) {
+    const arr = loadHistory();
+    const now = new Date();
+    arr.unshift({
+      id: now.getTime(),
+      keyword,
+      content,
+      date: now.toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' }),
+      time: now.toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit' })
+    });
+    storeHistory(arr);
+  }
+
+  function renderHistory() {
+    const arr = loadHistory();
+    const list = document.getElementById('historyList');
+    const countEl = document.getElementById('historyCount');
+    countEl.textContent = `총 ${arr.length}개`;
+    if (arr.length === 0) {
+      list.innerHTML = '<div class="history-empty">아직 생성된 글이 없습니다.<br>질문 생성 탭에서 먼저 블로그를 생성해보세요.</div>';
+      return;
+    }
+    list.innerHTML = arr.map((item) => `
+      <div class="history-item" id="hitem-${item.id}">
+        <div class="history-header" onclick="toggleHistory(this)">
+          <div style="flex:1;min-width:0;">
+            <div class="history-meta" style="flex-wrap:wrap;gap:6px;">
+              <span class="history-date">${item.date} ${item.time}</span>
+              <span class="history-keyword">${escapeHtml(item.keyword)}</span>
+              ${item.reviewer ? `<span class="reviewer-badge">✏️ ${escapeHtml(item.reviewer)}</span>` : ''}
+              ${item.editedAt ? `<span class="edited-badge">수정 ${item.editedAt}</span>` : ''}
+            </div>
+            <div class="history-preview">${escapeHtml(item.content.slice(0, 80))}...</div>
+          </div>
+        </div>
+        <div class="history-body">
+          <span class="history-text">${escapeHtml(item.content)}</span>
+          <div class="history-actions">
+            <button class="btn-copy-result" onclick="copyHistory(this)">📋 복사</button>
+            <button class="btn-dl-txt" onclick="dlHistoryTxt(this, '${escapeHtml(item.keyword)}')">📄 TXT</button>
+            <button class="btn-dl-word" onclick="dlHistoryWord(this, '${escapeHtml(item.keyword)}')">📝 Word</button>
+            <button class="btn-edit-history" onclick="openEditPanel(${item.id})">✏️ 편집</button>
+            <button class="btn-del-history" onclick="deleteHistory(${item.id})">🗑️ 삭제</button>
+          </div>
+        </div>
+        <div class="edit-panel" id="editpanel-${item.id}">
+          <textarea id="editarea-${item.id}">${escapeHtml(item.content)}</textarea>
+          <div class="edit-footer">
+            <input type="text" id="reviewer-${item.id}" placeholder="수정자 이름 입력" value="${escapeHtml(item.reviewer || '')}">
+            <button class="btn-save-edit" onclick="saveHistoryEdit(${item.id})">💾 수정 저장</button>
+            <button class="btn-cancel-edit" onclick="closeEditPanel(${item.id})">✕ 취소</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function toggleHistory(el) {
+    el.nextElementSibling.classList.toggle('open');
+  }
+
+  function openEditPanel(id) {
+    // 본문 펼치기
+    const item = document.getElementById(`hitem-${id}`);
+    item.querySelector('.history-body').classList.add('open');
+    // 편집 패널 열기
+    const panel = document.getElementById(`editpanel-${id}`);
+    panel.classList.add('open');
+    // textarea 에 실제 content 세팅 (이미 HTML escape 된 상태라 decode 필요)
+    const arr = loadHistory();
+    const entry = arr.find(i => i.id === id);
+    if (entry) {
+      document.getElementById(`editarea-${id}`).value = entry.content;
+      document.getElementById(`reviewer-${id}`).value = entry.reviewer || '';
+    }
+    panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function closeEditPanel(id) {
+    document.getElementById(`editpanel-${id}`).classList.remove('open');
+  }
+
+  function saveHistoryEdit(id) {
+    const newContent = document.getElementById(`editarea-${id}`).value.trim();
+    const reviewer = document.getElementById(`reviewer-${id}`).value.trim();
+    if (!newContent) { alert('내용이 비어있습니다.'); return; }
+    const arr = loadHistory();
+    const idx = arr.findIndex(i => i.id === id);
+    if (idx < 0) return;
+    arr[idx].content = newContent;
+    if (reviewer) arr[idx].reviewer = reviewer;
+    arr[idx].editedAt = new Date().toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    storeHistory(arr);
+    renderHistory();
+    toast('💾 수정 저장됨');
+    // 저장 후 해당 항목 펼쳐두기
+    setTimeout(() => {
+      const item = document.getElementById(`hitem-${id}`);
+      if (item) item.querySelector('.history-body').classList.add('open');
+    }, 50);
+  }
+
+  function copyHistory(btn) {
+    const text = btn.closest('.history-body').querySelector('.history-text').textContent;
+    navigator.clipboard.writeText(text).then(() => toast('📋 복사됨'));
+  }
+
+  function dlHistoryTxt(btn, keyword) {
+    const text = btn.closest('.history-body').querySelector('.history-text').textContent;
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' })),
+      download: `${keyword}.txt`
+    });
+    a.click(); toast('📄 TXT 저장됨');
+  }
+
+  function dlHistoryWord(btn, keyword) {
+    const text = btn.closest('.history-body').querySelector('.history-text').textContent;
+    saveWordFile(keyword, text);
+  }
+
+  function deleteHistory(id) {
+    if (!confirm('이 항목을 삭제할까요?')) return;
+    const arr = loadHistory().filter(i => i.id !== id);
+    storeHistory(arr);
+    renderHistory();
+    toast('🗑️ 삭제됨');
+  }
+
+  function clearHistory() {
+    if (!confirm('히스토리를 전부 삭제할까요?')) return;
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+    toast('🗑️ 전체 삭제됨');
+  }
+
+  // ── API 키 저장/불러오기 ──
+  function saveApiKey() {
+    const key = document.getElementById('apiKey').value;
+    if (key) localStorage.setItem('llm_apikey', key);
+  }
+
   // ── 초기화 ──
+  const savedKey = localStorage.getItem('llm_apikey');
+  if (savedKey) document.getElementById('apiKey').value = savedKey;
   renderTemplates();
 </script>
 
 
-</body></html>
+</div></body></html>
