@@ -321,6 +321,65 @@
   }
   .btn-cancel-edit:hover { background: #f5f5f5; }
 
+  /* ── Provider 선택 ── */
+  .provider-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .provider-card {
+    border: 2px solid #e0e0e0; border-radius: 10px; padding: 12px 8px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+    background: #fafafa;
+  }
+  .provider-card:hover { border-color: #a78bfa; background: #f7f5ff; }
+  .provider-card.active { border-color: #6c63ff; background: #ede9ff; }
+  .provider-icon { font-size: 1.4rem; margin-bottom: 4px; }
+  .provider-name { font-size: 0.88rem; font-weight: 700; color: #1a1a2e; }
+  .provider-sub { font-size: 0.72rem; color: #aaa; margin-top: 2px; }
+
+  /* ── 비밀번호 모달 ── */
+  .pw-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; backdrop-filter: blur(4px);
+  }
+  .pw-overlay.hidden { display: none; }
+  .pw-box {
+    background: #fff; border-radius: 16px; padding: 32px 28px;
+    width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); text-align: center;
+  }
+  .pw-box h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .pw-box p { font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+  .pw-input {
+    width: 100%; border: 2px solid #e0e0e0; border-radius: 8px;
+    padding: 10px 14px; font-size: 1rem; text-align: center;
+    letter-spacing: 0.2em; margin-bottom: 12px; font-family: inherit;
+  }
+  .pw-input:focus { outline: none; border-color: #6c63ff; }
+  .pw-error { color: #e53e3e; font-size: 0.82rem; margin-bottom: 10px; min-height: 18px; }
+  .btn-pw-ok {
+    width: 100%; background: #6c63ff; color: #fff; border: none;
+    padding: 11px; border-radius: 8px; font-size: 0.95rem;
+    font-weight: 600; cursor: pointer; margin-bottom: 8px;
+  }
+  .btn-pw-ok:hover { opacity: 0.88; }
+  .btn-pw-cancel {
+    width: 100%; background: none; border: none; color: #aaa;
+    font-size: 0.85rem; cursor: pointer; padding: 4px;
+  }
+  .btn-pw-cancel:hover { color: #666; }
+  .pw-set-row {
+    display: flex; gap: 6px; margin-top: 10px;
+  }
+  .pw-set-row input {
+    flex: 1; border: 1.5px solid #e0e0e0; border-radius: 8px;
+    padding: 7px 10px; font-size: 0.85rem; font-family: inherit;
+  }
+  .btn-pw-set {
+    padding: 7px 12px; border-radius: 8px; border: none;
+    background: #6c63ff; color: #fff; font-size: 0.82rem;
+    font-weight: 600; cursor: pointer; white-space: nowrap;
+  }
+
   /* toast */
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
@@ -345,25 +404,48 @@
   <!-- 질문 생성 탭 -->
   <div class="tab-panel active" id="panel-gen">
 
-  <!-- ① API Key -->
+  <!-- ① LLM 선택 -->
   <div class="card">
-    <div class="card-title">① Anthropic API 키</div>
+    <div class="card-title">① LLM 선택</div>
+    <div class="provider-grid">
+      <div class="provider-card active" id="pcard-claude" onclick="selectProvider(&#39;claude&#39;)">
+        <div class="provider-icon">🤖</div>
+        <div class="provider-name">Claude</div>
+        <div class="provider-sub">Anthropic</div>
+      </div>
+      <div class="provider-card" id="pcard-openai" onclick="selectProvider(&#39;openai&#39;)">
+        <div class="provider-icon">💬</div>
+        <div class="provider-name">ChatGPT</div>
+        <div class="provider-sub">OpenAI</div>
+      </div>
+      <div class="provider-card" id="pcard-gemini" onclick="selectProvider(&#39;gemini&#39;)">
+        <div class="provider-icon">✨</div>
+        <div class="provider-name">Gemini</div>
+        <div class="provider-sub">Google</div>
+      </div>
+      <div class="provider-card" id="pcard-genspark" onclick="selectProvider(&#39;genspark&#39;)">
+        <div class="provider-icon">⚡</div>
+        <div class="provider-name">Genspark</div>
+        <div class="provider-sub">Genspark AI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② API Key -->
+  <div class="card">
+    <div class="card-title" id="apiKeyTitle">② Claude (Anthropic) API 키</div>
     <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" oninput="saveApiKey()">
-    <p class="hint">
+    <p class="hint" id="apiKeyHint">
       키가 없으시면 →
-      <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#6c63ff">console.anthropic.com</a>
+      <a id="apiKeyLink" href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#6c63ff">console.anthropic.com/settings/keys</a>
       에서 발급 받으세요. 키는 브라우저 밖으로 전송되지 않습니다.
     </p>
   </div>
 
-  <!-- ② Model -->
+  <!-- ③ Model -->
   <div class="card">
-    <div class="card-title">② 모델 선택</div>
-    <select id="model">
-      <option value="claude-haiku-4-5-20251001">Claude Haiku — 빠르고 저렴 (추천)</option>
-      <option value="claude-sonnet-4-6">Claude Sonnet — 균형잡힌 성능</option>
-      <option value="claude-opus-4-6">Claude Opus — 가장 정확, 비용 높음</option>
-    </select>
+    <div class="card-title">③ 모델 선택</div>
+    <select id="model"><option value="claude-haiku-4-5-20251001">Claude Haiku — 빠르고 저렴 (추천)</option><option value="claude-sonnet-4-6">Claude Sonnet — 균형잡힌 성능</option><option value="claude-opus-4-6">Claude Opus — 가장 정확, 비용 높음</option></select>
   </div>
 
   <!-- ③ Prompt Template + Library -->
@@ -650,6 +732,7 @@ AI 이미지 프롬프트(영어)
           <div class="history-count" id="historyCount"></div>
         </div>
         <button class="btn-clear-history" onclick="clearHistory()">🗑️ 전체 삭제</button>
+        <button class="btn-clear-history" style="background:#f0eeff;color:#6c63ff;border-color:#d0cbff;" onclick="document.getElementById(&#39;pwSetOverlay&#39;).classList.remove(&#39;hidden&#39;)">🔑 비밀번호 설정</button>
       </div>
       <div id="historyList"></div>
     </div>
@@ -658,6 +741,34 @@ AI 이미지 프롬프트(영어)
 </div>
 
 <div id="toast"></div>
+
+<!-- 비밀번호 모달 -->
+<div class="pw-overlay hidden" id="pwOverlay">
+  <div class="pw-box">
+    <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+    <h2>히스토리 접근</h2>
+    <p id="pwDesc">이름과 비밀번호를 입력하세요</p>
+    <input type="text" class="pw-input" id="pwNameInput" placeholder="이름 (예: 김에디터)" maxlength="20" style="letter-spacing:normal;margin-bottom:8px;" onkeydown="if(event.key===&#39;Enter&#39;)document.getElementById(&#39;pwInput&#39;).focus()">
+    <input type="password" class="pw-input" id="pwInput" placeholder="비밀번호" maxlength="20" onkeydown="if(event.key===&#39;Enter&#39;)checkPassword()">
+    <div class="pw-error" id="pwError"></div>
+    <button class="btn-pw-ok" onclick="checkPassword()">입장</button>
+    <button class="btn-pw-cancel" onclick="closePwModal()">취소</button>
+  </div>
+</div>
+
+<!-- 비밀번호 설정 모달 -->
+<div class="pw-overlay hidden" id="pwSetOverlay">
+  <div class="pw-box">
+    <div style="font-size:2rem;margin-bottom:8px;">🔑</div>
+    <h2>비밀번호 설정</h2>
+    <p>히스토리 접근 비밀번호를 설정합니다</p>
+    <input type="password" class="pw-input" id="pwNewInput" placeholder="새 비밀번호" maxlength="20">
+    <input type="password" class="pw-input" id="pwNewConfirm" placeholder="비밀번호 확인" maxlength="20" style="margin-top:8px;" onkeydown="if(event.key===&#39;Enter&#39;)setPassword()">
+    <div class="pw-error" id="pwSetError"></div>
+    <button class="btn-pw-ok" onclick="setPassword()">저장</button>
+    <button class="btn-pw-cancel" onclick="document.getElementById(&#39;pwSetOverlay&#39;).classList.add(&#39;hidden&#39;)">취소</button>
+  </div>
+</div>
 
 <script>
   // ── 토스트 ──
@@ -762,8 +873,84 @@ AI 이미지 프롬프트(영어)
       .map(i => i.value.trim()).filter(Boolean);
   }
 
-  // ── Claude 호출 ──
+  // ── Provider 설정 ──
+  const PROVIDERS = {
+    claude: {
+      label: 'Claude (Anthropic)',
+      placeholder: 'sk-ant-...',
+      hintText: 'console.anthropic.com/settings/keys',
+      hintUrl: 'https://console.anthropic.com/settings/keys',
+      models: [
+        { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku — 빠르고 저렴 (추천)' },
+        { value: 'claude-sonnet-4-6',         label: 'Claude Sonnet — 균형잡힌 성능' },
+        { value: 'claude-opus-4-6',           label: 'Claude Opus — 가장 정확, 비용 높음' },
+      ]
+    },
+    openai: {
+      label: 'ChatGPT (OpenAI)',
+      placeholder: 'sk-...',
+      hintText: 'platform.openai.com/api-keys',
+      hintUrl: 'https://platform.openai.com/api-keys',
+      models: [
+        { value: 'gpt-4o-mini', label: 'GPT-4o mini — 빠르고 저렴 (추천)' },
+        { value: 'gpt-4o',      label: 'GPT-4o — 균형잡힌 성능' },
+        { value: 'o1-mini',     label: 'o1-mini — 추론 특화' },
+      ]
+    },
+    gemini: {
+      label: 'Gemini (Google)',
+      placeholder: 'AIza...',
+      hintText: 'aistudio.google.com/app/apikey',
+      hintUrl: 'https://aistudio.google.com/app/apikey',
+      models: [
+        { value: 'gemini-2.0-flash',   label: 'Gemini 2.0 Flash — 빠르고 저렴 (추천)' },
+        { value: 'gemini-1.5-pro',     label: 'Gemini 1.5 Pro — 고성능' },
+        { value: 'gemini-1.5-flash',   label: 'Gemini 1.5 Flash — 균형' },
+      ]
+    },
+    genspark: {
+      label: 'Genspark AI',
+      placeholder: 'API 키 입력...',
+      hintText: 'www.genspark.ai',
+      hintUrl: 'https://www.genspark.ai',
+      models: [
+        { value: 'genspark-agent', label: 'Genspark Agent (기본)' },
+      ]
+    }
+  };
+
+  let currentProvider = 'claude';
+
+  function selectProvider(id) {
+    currentProvider = id;
+    document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('active'));
+    document.getElementById('pcard-' + id).classList.add('active');
+    const p = PROVIDERS[id];
+    document.getElementById('apiKeyTitle').textContent = `② ${p.label} API 키`;
+    document.getElementById('apiKey').placeholder = p.placeholder;
+    document.getElementById('apiKeyLink').href = p.hintUrl;
+    document.getElementById('apiKeyLink').textContent = p.hintText;
+    // 모델 업데이트
+    const sel = document.getElementById('model');
+    sel.innerHTML = p.models.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+    // 저장된 키 불러오기
+    const savedKey = localStorage.getItem('llm_apikey_' + id);
+    document.getElementById('apiKey').value = savedKey || '';
+    localStorage.setItem('llm_provider', id);
+  }
+
+  // ── API 호출 ──
   async function queryOpenAI(apiKey, model, prompt) {
+    switch(currentProvider) {
+      case 'claude':   return await callClaude(apiKey, model, prompt);
+      case 'openai':   return await callOpenAI(apiKey, model, prompt);
+      case 'gemini':   return await callGemini(apiKey, model, prompt);
+      case 'genspark': return await callGenspark(apiKey, model, prompt);
+      default: throw new Error('알 수 없는 provider');
+    }
+  }
+
+  async function callClaude(apiKey, model, prompt) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -772,18 +959,41 @@ AI 이미지 프롬프트(영어)
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
-      body: JSON.stringify({
-        model,
-        max_tokens: 8096,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ model, max_tokens: 8096, messages: [{ role: 'user', content: prompt }] })
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    return data.content[0].text.trim();
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    return (await res.json()).content[0].text.trim();
+  }
+
+  async function callOpenAI(apiKey, model, prompt) {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({ model, max_tokens: 4096, messages: [{ role: 'user', content: prompt }], temperature: 0.7 })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    return (await res.json()).choices[0].message.content.trim();
+  }
+
+  async function callGemini(apiKey, model, prompt) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 8192 } })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    return (await res.json()).candidates[0].content.parts[0].text.trim();
+  }
+
+  async function callGenspark(apiKey, model, prompt) {
+    const res = await fetch('https://api.genspark.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({ model: 'genspark-agent', stream: false, messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    return (await res.json()).choices[0].message.content.trim();
   }
 
   // ── 결과 카드 ──
@@ -990,13 +1200,70 @@ AI 이미지 프롬프트(영어)
     e.target.value = '';
   }
 
-  // ── 탭 전환 ──
+  // ── 비밀번호 관리 ──
+  const PW_KEY = 'llm_history_pw';
+  let historyUnlocked = false;
+  let currentUser = '';
+
   function switchTab(tab) {
+    if (tab === 'history') {
+      const pw = localStorage.getItem(PW_KEY);
+      if (!pw) {
+        // 비밀번호 미설정 시 바로 입장 (설정 안내)
+        doSwitchTab('history');
+        return;
+      }
+      if (historyUnlocked) {
+        doSwitchTab('history');
+        return;
+      }
+      // 비밀번호 모달 띄우기
+      document.getElementById('pwOverlay').classList.remove('hidden');
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwNameInput').value = currentUser || '';
+      document.getElementById('pwError').textContent = '';
+      setTimeout(() => document.getElementById('pwNameInput').focus(), 100);
+      return;
+    }
+    doSwitchTab(tab);
+  }
+
+  function doSwitchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('panel-' + tab).classList.add('active');
     if (tab === 'history') renderHistory();
+  }
+
+  function checkPassword() {
+    const name = document.getElementById('pwNameInput').value.trim();
+    const input = document.getElementById('pwInput').value;
+    const saved = localStorage.getItem(PW_KEY);
+    if (!name) { document.getElementById('pwError').textContent = '이름을 입력해주세요.'; return; }
+    if (input !== saved) { document.getElementById('pwError').textContent = '비밀번호가 틀렸습니다.'; return; }
+    historyUnlocked = true;
+    currentUser = name;
+    localStorage.setItem('llm_current_user', name);
+    document.getElementById('pwOverlay').classList.add('hidden');
+    doSwitchTab('history');
+    toast(`👋 ${name}님 환영합니다!`);
+  }
+
+  function closePwModal() {
+    document.getElementById('pwOverlay').classList.add('hidden');
+  }
+
+  function setPassword() {
+    const pw1 = document.getElementById('pwNewInput').value;
+    const pw2 = document.getElementById('pwNewConfirm').value;
+    if (!pw1) { document.getElementById('pwSetError').textContent = '비밀번호를 입력해주세요.'; return; }
+    if (pw1 !== pw2) { document.getElementById('pwSetError').textContent = '비밀번호가 일치하지 않습니다.'; return; }
+    localStorage.setItem(PW_KEY, pw1);
+    document.getElementById('pwSetOverlay').classList.add('hidden');
+    document.getElementById('pwNewInput').value = '';
+    document.getElementById('pwNewConfirm').value = '';
+    toast('🔑 비밀번호가 설정됐습니다!');
   }
 
   // ── 히스토리 저장소 ──
@@ -1012,10 +1279,12 @@ AI 이미지 프롬프트(영어)
   function saveToHistory(keyword, content) {
     const arr = loadHistory();
     const now = new Date();
+    const author = currentUser || localStorage.getItem('llm_current_user') || '';
     arr.unshift({
       id: now.getTime(),
       keyword,
       content,
+      author,
       date: now.toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' }),
       time: now.toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit' })
     });
@@ -1038,6 +1307,7 @@ AI 이미지 프롬프트(영어)
             <div class="history-meta" style="flex-wrap:wrap;gap:6px;">
               <span class="history-date">${item.date} ${item.time}</span>
               <span class="history-keyword">${escapeHtml(item.keyword)}</span>
+              ${item.author ? `<span class="reviewer-badge" style="background:#e0f2fe;color:#0369a1;border-color:#bae6fd;">✍️ ${escapeHtml(item.author)}</span>` : ''}
               ${item.reviewer ? `<span class="reviewer-badge">✏️ ${escapeHtml(item.reviewer)}</span>` : ''}
               ${item.editedAt ? `<span class="edited-badge">수정 ${item.editedAt}</span>` : ''}
             </div>
@@ -1145,15 +1415,16 @@ AI 이미지 프롬프트(영어)
     toast('🗑️ 전체 삭제됨');
   }
 
-  // ── API 키 저장/불러오기 ──
+  // ── API 키 저장 (provider별) ──
   function saveApiKey() {
     const key = document.getElementById('apiKey').value;
-    if (key) localStorage.setItem('llm_apikey', key);
+    if (key) localStorage.setItem('llm_apikey_' + currentProvider, key);
   }
 
   // ── 초기화 ──
-  const savedKey = localStorage.getItem('llm_apikey');
-  if (savedKey) document.getElementById('apiKey').value = savedKey;
+  const savedProvider = localStorage.getItem('llm_provider') || 'claude';
+  selectProvider(savedProvider);
+  currentUser = localStorage.getItem('llm_current_user') || '';
   renderTemplates();
 </script>
 
