@@ -321,6 +321,61 @@
   }
   .btn-cancel-edit:hover { background: #f5f5f5; }
 
+  /* ── 편집 모달 ── */
+  .edit-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
+  }
+  .edit-modal-overlay.hidden { display: none; }
+  .edit-modal-box {
+    background: #fff; border-radius: 16px;
+    width: 100%; max-width: 760px;
+    max-height: 90vh; display: flex; flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  .edit-modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 22px; border-bottom: 1.5px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+  .edit-modal-title {
+    font-size: 1rem; font-weight: 700; color: #1a1a2e;
+  }
+  .edit-modal-kw {
+    font-size: 0.85rem; color: #6c63ff; font-weight: 600;
+    margin-top: 2px;
+  }
+  .edit-modal-close {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: #f5f5f5; color: #888; font-size: 1.1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .edit-modal-close:hover { background: #fee2e2; color: #e53e3e; }
+  .edit-modal-body {
+    flex: 1; overflow-y: auto; padding: 18px 22px;
+  }
+  .edit-modal-body textarea {
+    width: 100%; min-height: 55vh; font-size: 0.92rem;
+    line-height: 1.8; border: 1.5px solid #e0e0e0;
+    border-radius: 10px; padding: 14px; background: #fafafa;
+    font-family: inherit; resize: none; box-sizing: border-box;
+  }
+  .edit-modal-body textarea:focus {
+    outline: none; border-color: #6c63ff; background: #fff;
+  }
+  .edit-modal-footer {
+    display: flex; gap: 8px; padding: 14px 22px;
+    border-top: 1.5px solid #f0f0f0; flex-shrink: 0;
+    background: #fafafa;
+  }
+  .edit-modal-char {
+    flex: 1; font-size: 0.8rem; color: #aaa;
+    display: flex; align-items: center;
+  }
+
   /* ── Provider 선택 ── */
   .provider-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
@@ -397,12 +452,12 @@
 
   <!-- 탭 네비게이션 -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-gen" onclick="switchTab(&#39;gen&#39;)">✏️ 질문 생성</button>
-    <button class="tab-btn" id="tab-history" onclick="switchTab(&#39;history&#39;)">📋 히스토리 <span id="historyBadge" style="display: inline; background: rgb(108, 99, 255); color: rgb(255, 255, 255); border-radius: 99px; font-size: 0.72rem; padding: 1px 7px; margin-left: 4px; font-weight: 700;">8</span></button>
+    <button class="tab-btn" id="tab-gen" onclick="switchTab(&#39;gen&#39;)">✏️ 질문 생성</button>
+    <button class="tab-btn active" id="tab-history" onclick="switchTab(&#39;history&#39;)">📋 히스토리 <span id="historyBadge" style="display: inline; background: rgb(108, 99, 255); color: rgb(255, 255, 255); border-radius: 99px; font-size: 0.72rem; padding: 1px 7px; margin-left: 4px; font-weight: 700;">5</span></button>
   </div>
 
   <!-- 질문 생성 탭 -->
-  <div class="tab-panel" id="panel-gen" style="display: block;">
+  <div class="tab-panel" id="panel-gen" style="display: none;">
 
   <!-- ① LLM 선택 -->
   <div class="card">
@@ -731,148 +786,19 @@ AI 이미지 프롬프트(영어)
   </div><!-- end panel-gen -->
 
   <!-- 히스토리 탭 -->
-  <div class="tab-panel" id="panel-history" style="display: none;">
+  <div class="tab-panel" id="panel-history" style="display: block;">
     <div class="card">
       <div class="history-toolbar">
         <div>
           <div class="card-title" style="margin-bottom:2px;">📋 생성 히스토리</div>
-          <div class="history-count" id="historyCount">총 8개</div>
+          <div class="history-count" id="historyCount">총 5개</div>
         </div>
         <button class="btn-clear-history" onclick="clearHistory()">🗑️ 전체 삭제</button>
         <button class="btn-clear-history" style="background:#f0eeff;color:#6c63ff;border-color:#d0cbff;" onclick="document.getElementById(&#39;pwSetOverlay&#39;).classList.remove(&#39;hidden&#39;)">🔑 비밀번호 설정</button>
       </div>
-      <div id="historyList"><div id="hi1774332034943" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774332034943&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774332034943" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 03:00</span><strong id="hk1774332034943" style="font-size:0.95rem;color:#1a1a2e;">비타민d</strong><span id="ha1774332034943" style="font-size:0.72rem;padding:2px 8px;border-radius:99px;background:#e0f2fe;color:#0369a1;font-weight:600;">✍️ 김윤세</span></div><div id="hp1774332034943" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "많이 먹어도 소용없다?" 비타민D 흡수의 진짜 기준 5가지
+      <div id="historyList"><div id="hi1774331751290" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774331751290&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774331751290" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 02:55</span><strong id="hk1774331751290" style="font-size:0.95rem;color:#1a1a2e;">비타민c</strong><span id="ha1774331751290" style="font-size:0.72rem;padding:2px 8px;border-radius:99px;background:#e0f2fe;color:#0369a1;font-weight:600;">✍️ 김윤세</span></div><div id="hp1774331751290" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "많이 먹어도 부족하다?"… 비타민C가 정말 우리 몸에서 하는 일 5가지
 
----
-
-&gt; 본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련...</div></div></div><div id="hb1774332034943" style="display:none;padding:16px;border-top:1.5px solid #e0e0e0;"><div id="ht1774332034943" style="white-space:pre-wrap;font-size:0.9rem;line-height:1.8;"># "많이 먹어도 소용없다?" 비타민D 흡수의 진짜 기준 5가지
-
----
-
-&gt; 본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련 판단은 전문 의료인과 상담하세요.
-
----
-
-## [서론]
-
-햇볕을 쬐면 자연적으로 만들어지는 영양소. 우리가 비타민D에 대해 가장 먼저 떠올리는 이미지는 이처럼 단순하고 친근하다. 실외 활동이 많은 사람이라면 굳이 따로 챙겨 먹지 않아도 되는 것 아닐까, 혹은 보충제를 꾸준히 먹고 있으니 별 문제 없겠지, 라는 생각이 자연스럽게 생긴다. 실제로 비타민D는 건강기능식품 시장에서 꾸준히 높은 판매량을 기록하는 성분 중 하나다. 많은 사람들이 이미 복용하고 있거나, 복용을 고려 중이다.
-
-하지만 의외로 많은 사람들이 비타민D를 "먹고 있다"는 사실만으로 충분하다고 착각한다. 실제로 체내에서 비타민D가 제대로 기능하려면 단순히 보충제를 섭취하는 것 이상의 조건이 필요하다. 흡수되는 경로, 함께 섭취하는 영양소, 개인의 체지방 비율, 복용 시간대 등 다양한 변수가 실제 활용 가능한 비타민D의 양을 결정한다. 즉, 얼마나 먹느냐만큼이나 **어떻게 흡수되고 활성화되느냐**가 핵심이다.
-
-이 글에서는 비타민D가 체내에서 작동하는 기전, 흡수율에 영향을 미치는 요인, 그리고 실제 생활에서 효과를 높이기 위한 실천 방법까지 단계적으로 살펴본다. 보충제를 이미 복용 중인 사람이라면 지금보다 훨씬 효율적으로 비타민D를 활용할 수 있는 정보를 얻게 될 것이다.
-
----
-
-## 관련 연구
-
-1. *Vitamin D Deficiency and Its Association with Thyroid Disease* — **Nutrients**, 2018
-2. *Vitamin D Supplementation and Falls: A Trial Sequential Meta-Analysis* — **JAMA Internal Medicine**, 2015
-3. *The Role of Vitamin D in Immune Function* — **Frontiers in Immunology**, 2020
-4. *Magnesium and Vitamin D Deficiency as a Potential Cause of Immune Dysfunction* — **Journal of the American Osteopathic Association**, 2021
-
----
-
-## [본론 1] 비타민D는 어떻게 몸에서 작동하는가 — 기전과 형태
-
-비타민D는 흔히 '비타민'이라고 불리지만, 엄밀히 말하면 호르몬 전구체(호르몬을 만들기 전 단계의 물질)로 분류된다. 피부가 자외선 B(UVB)에 노출되면 콜레스테롤 유도체가 비타민D3(콜레칼시페롤)로 전환되고, 이후 간과 신장을 거치며 두 차례 대사 과정을 통해 최종적으로 활성형인 **칼시트리올(1,25-디하이드록시비타민D)**로 변환된다. 이 활성형만이 세포 내 비타민D 수용체(VDR)에 결합해 실질적인 생리 작용을 수행할 수 있다.
-
-비타민D 수용체는 면역세포, 근육세포, 심혈관계, 신경계, 장세포 등 체내 거의 모든 주요 조직에 분포하고 있다. 이 수용체가 활성화되면 칼슘과 인의 흡수를 조절해 뼈 건강을 유지하고, 면역세포의 활성화 및 조절에 관여하며, 특정 유전자의 발현을 조절하는 데도 영향을 미친다. 단순히 뼈를 튼튼하게 하는 영양소 이상의 역할을 한다는 뜻이다.
-
-비타민D는 크게 두 가지 형태로 존재한다. 식물성 공급원에서 얻을 수 있는 **D2(에르고칼시페롤)**와 동물성 공급원 및 피부 합성을 통해 얻는 **D3(콜레칼시페롤)**이다. 연구에 따르면 D3가 D2보다 혈중 비타민D 농도를 더 효과적으로 올리고 유지하는 것으로 나타나, 보충제 선택 시 D3 형태가 더 권장된다. 단, 식품으로 섭취할 수 있는 비타민D의 양은 대부분 필요량에 미치지 못하는 경우가 많아 햇빛 노출 또는 보충제 섭취가 중요한 역할을 한다.
-
-또한 비타민D는 지용성 비타민에 해당한다. 지용성이란 지방에 녹는 성질을 의미하며, 체내에 축적이 가능하다는 장점이 있지만, 과잉 섭취 시 독성을 유발할 수 있다는 점도 함께 고려해야 한다. 몸에 지방이 많을수록 지방 조직에 비타민D가 격리되어 혈중 농도가 낮아질 수 있는 것도 이 지용성 특성과 관련된다.
-
----
-
-## [본론 2] 흡수를 방해하거나 촉진하는 현실적인 변수들
-
-비타민D 보충제를 꾸준히 복용해도 혈중 수치가 기대만큼 오르지 않는다는 경험을 하는 사람들이 적지 않다. 그 이유는 단일하지 않으며, 여러 요인이 복합적으로 작용한다.
-
-**첫째, 마그네슘 결핍이 비타민D 활성화를 막을 수 있다.** 비타민D가 간과 신장에서 활성형으로 전환되는 대사 과정에는 마그네슘을 필요로 하는 효소가 관여한다. 2021년 미국 정골의학협회 저널에 발표된 연구에서는 마그네슘이 부족한 경우 비타민D 보충제를 복용해도 활성화 효율이 떨어질 수 있다는 점을 지적했다. 현대인의 식단에서 마그네슘은 만성적으로 부족한 경우가 많다는 점에서 주목할 만한 결과다.
-
-**둘째, 식사와 함께 복용하는지 여부가 중요하다.** 비타민D는 지용성이기 때문에 지방이 포함된 식사와 함께 섭취할 때 흡수율이 높아진다. 공복 상태에서 복용하면 소장에서의 흡수 효율이 상대적으로 낮아질 수 있다. 아보카도, 올리브오일, 견과류 등 건강한 지방이 포함된 식사와 함께 섭취하는 방식이 실질적인 흡수를 높이는 데 도움이 될 수 있다.
-
-**셋째, 비만 또는 높은 체지방은 혈중 비타민D 농도를 낮추는 요인이 된다.** 지방 조직이 많을수록 비타민D가 지방 안에 저장되어 혈액 내로 순환하는 양이 줄어든다. 이런 경우 권장 섭취량보다 더 높은 용량이 필요할 수 있으며, 의료인과의 상담을 통해 개인화된 용량을 조정하는 것이 바람직하다.
-
-**넷째, 나이가 들수록 피부 합성 능력이 떨어진다.** 자외선을 받아 비타민D를 합성하는 피부의 능력은 나이와 함께 점차 감소한다. 70대 이상의 경우 동일한 햇빛 노출에서 생성되는 비타민D의 양이 20대에 비해 현저히 적은 것으로 보고된다. 계절과 위도, 피부 색소 침착의 정도 역시 햇빛을 통한 합성량에 영향을 미친다.
-
-**다섯째, 장 흡수 문제가 있는 경우 경구 섭취 효율이 낮아질 수 있다.** 크론병, 셀리악병, 또는 일부 위장관 수술 후 상태에서는 소장을 통한 지용성 비타민 흡수 자체가 감소한다. 이 경우 혈중 비타민D 수치 모니터링이 더욱 중요하다.
-
----
-
-## [이미지 제안]
-
-**이미지 제안 #1**
-- 위치: 도입부 뒤
-- 용도: 건강 개념
-- 설명: 햇볕이 내리쬐는 창가에서 보충제를 복용하는 장면으로, 비타민D의 자연 합성과 보충제 섭취를 함께 연상시키는 이미지
-- AI 이미지 프롬프트: A person holding a vitamin D supplement capsule near a sunny window, soft morning light, minimalist kitchen background, editorial health blog style, natural lighting, realistic, non-commercial
-
-**이미지 제안 #2**
-- 위치: 본문 중간
-- 용도: 식품 및 생활습관
-- 설명: 연어, 달걀노른자, 버섯 등 비타민D 함유 식품들을 자연스럽게 배치한 이미지로 식이 섭취 방법을 시각적으로 전달
-- AI 이미지 프롬프트: A flat lay of vitamin D rich foods including salmon, egg yolks, and shiitake mushrooms on a light wooden table, soft tones, natural lighting, candid, minimalist, high-quality texture, editorial health blog style
-
-**이미지 제안 #3**
-- 위치: 마무리 전
-- 용도: 건강 개념 / 생활습관
-- 설명: 야외에서 가벼운 산책을 즐기는 중장년 인물의 자연스러운 장면으로, 규칙적인 햇빛 노출의 중요성을 공감형으로 전달
-- AI 이미지 프롬프트: A middle-aged person walking outdoors on a sunny day, casual and candid, soft natural light, greenery in background, minimalist, non-commercial, editorial health blog style
-
----
-
-## [본론 3] 비타민D를 실제로 잘 활용하기 위한 실천 포인트 5가지
-
-이론과 기전을 이해했다면, 이제 일상에서 비타민D를 보다 효율적으로 활용하기 위한 구체적인 방법으로 넘어간다.
-
-**1. 혈중 25(OH)D 수치를 먼저 확인한다**
-
-보충제 용량을 결정하기 전, 혈액검사를 통해 현재 비타민D 상태를 파악하는 것이 우선이다. 혈중 25-하이드록시비타민D(25(OH)D) 수치는 체내 비타민D 저장량을 가장 잘 반영하는 지표다. 일반적으로 30ng/mL 이상이면 충분한 상태, 20ng/mL 미만이면 결핍으로 분류된다. 같은 용량을 복용해도 초기 수치에 따라 반응이 다르기 때문에, 무조건 고용량을 복용하기보다는 현재 상태를 기준으로 접근하는 것이 합리적이다.
-
-**2. 지방이 포함된 식사 후에 보충제를 복용한다**
-
-앞서 언급했듯 비타민D는 지용성이므로 식사와 함께 섭취할 때 소장에서의 흡수 효율이 높아진다. 특히 건강한 불포화지방이 포함된 식사, 예를 들어 올리브오일을 사용한 샐러드나 아보카도가 들어간 식사 등과 함께 섭취하는 것이 권장된다. 공복이나 지방이 거의 없는 식사 직후에는 흡수율이 낮아질 수 있다.
-
-**3. 마그네슘을 함께 챙긴다**
-
-비타민D의 활성화에 마그네슘이 필요하다는 연구 결과를 고려할 때, 마그네슘 섭취도 함께 신경 쓰는 것이 도움이 될 수 있다. 마그네슘이 풍부한 식품으로는 시금치, 아몬드, 두부, 검은콩, 바나나 등이 있다. 식이로 충분히 섭취하기 어려운 경우 마그네슘 보충제를 고려해볼 수 있으나, 이 역시 전문가와의 상담을 바탕으로 결정하는 것이 바람직하다.
-
-**4. 햇빛 노출 시간을 현실적으로 확보한다**
-
-실내 생활이 많은 현대인에게 충분한 햇빛 노출은 쉽지 않지만, 짧은 시간이라도 규칙적으로 자외선 B에 노출되면 피부 합성에 도움이 된다. 오전 10시에서 오후 2시 사이 팔과 다리가 노출된 상태로 10~20분 정도 야외 활동을 하는 것이 피부 합성 측면에서 실질적인 효과를 기대할 수 있는 방법으로 알려져 있다. 단, 강한 자외선에 장시간 노출되는 것은 피부 건강에 부담을 줄 수 있으므로 균형 잡힌 접근이 필요하다.
-
-**5. 비타민K2와의 조합도 고려해볼 수 있다**
-
-비타민D는 칼슘 흡수를 촉진하는 역할을 하는데, 이 과정에서 비타민K2가 칼슘이 혈관이 아닌 뼈에 제대로 침착되도록 돕는 보조적 역할을 하는 것으로 알려져 있다. 고용량 비타민D 보충제를 장기간 복용하는 경우, 비타민K2와의 병행 섭취를 고려하는 경우도 있다. 다만 이는 개인의 건강 상태와 약물 복용 여부에 따라 신중하게 판단해야 한다.
-
----
-
-## [심화 / 주의사항]
-
-**비타민D 과잉 섭취는 안전하지 않다**
-
-지용성 비타민이라는 특성상 비타민D는 과잉 섭취 시 체내에 축적되어 독성을 일으킬 수 있다. 고칼슘혈증(혈액 내 칼슘 농도가 지나치게 높아진 상태)이 대표적인 과잉 독성 증상이며, 구역감, 두통, 신장 결석 등과 관련될 수 있다. 일반적으로 성인의 상한 섭취량은 하루 4,000IU 수준으로 제시되나, 개인의 기저 수치와 건강 상태에 따라 안전 범위가 달라질 수 있다. 임의로 고용량을 복용하는 것은 권장되지 않는다.
-
-**선크림과 비타민D 합성의 관계**
-
-자외선 차단제(SPF 30 이상)는 UVB를 상당 부분 차단하기 때문에 이론적으로 피부에서의 비타민D 합성을 줄일 수 있다. 다만 실제 생활 조건에서는 완벽하게 도포하지 않거나 노출 시간이 길어지는 경우가 많아, 영향이 완전하지는 않다는 연구도 있다. 선크림 사용을 줄이기보다는 보충제나 식이 섭취로 보완하는 방식이 현실적인 대안으로 제시된다.
-
-**자주 묻는 질문: 아침과 저녁, 언제 복용하는 것이 더 좋을까?**
-
-비타민D 복용 시간대에 대해 명확한 임상적 합의가 존재하지는 않는다. 그러나 일부 연구에서는 저녁 복용이 멜라토닌 생성에 영향을 줄 수 있다는 가능성이 언급된 바 있어, 일반적으로는 아침 또는 점심 식사 후 복용이 권장되는 경향이 있다. 중요한 것은 특정 시간대보다 **지방이 포함된 식사와 함께, 규칙적으로 복용하는 습관**이다.
-
----
-
-## [결론]
-
-비타민D는 단순히 뼈 건강에만 관련된 영양소가 아니라, 면역 조절, 근육 기능, 심혈관 건강 등 폭넓은 생리 작용에 관여하는 중요한 성분이다. 그러나 복용하고 있다는 사실 자체보다, **얼마나 효과적으로 흡수되고 활성화되는가**가 실질적인 건강 효과를 결정한다. 혈중 수치 확인, 식사와의 조합, 마그네슘 등 관련 영양소와의 균형 등을 함께 고려할 때 비타민D의 실질적인 활용도가 높아진다. 보충제 하나에 의존하기보다는 햇빛 노출, 식단, 생활 습관 전반을 균형 있게 관리하는 것이 장기적인 건강 유지에 더욱 도움이 될 수 있다.
-
----
-
-*— The Healthy Reporter 메인 에디터*</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774332034943&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774332034943,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774332034943,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774332034943,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774332034943)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774332034943)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774332034943" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774332034943" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774332034943)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774332034943&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div><div id="hi1774331751290" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774331751290&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774331751290" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 02:55</span><strong id="hk1774331751290" style="font-size:0.95rem;color:#1a1a2e;">비타민c</strong><span id="ha1774331751290" style="font-size:0.72rem;padding:2px 8px;border-radius:99px;background:#e0f2fe;color:#0369a1;font-weight:600;">✍️ 김윤세</span></div><div id="hp1774331751290" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "많이 먹어도 부족하다?"… 비타민C가 정말 우리 몸에서 하는 일 5가지
-
-**본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 ...</div></div></div><div id="hb1774331751290" style="display:none;padding:16px;border-top:1.5px solid #e0e0e0;"><div id="ht1774331751290" style="white-space:pre-wrap;font-size:0.9rem;line-height:1.8;"># "많이 먹어도 부족하다?"… 비타민C가 정말 우리 몸에서 하는 일 5가지
+**본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 ...</div></div></div><div id="hb1774331751290" style="display: block; padding: 16px; border-top: 1.5px solid rgb(224, 224, 224);"><div id="ht1774331751290" style="white-space:pre-wrap;font-size:0.9rem;line-height:1.8;"># "많이 먹어도 부족하다?"… 비타민C가 정말 우리 몸에서 하는 일 5가지
 
 **본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련 판단은 전문 의료인과 상담하세요.**
 
@@ -1350,84 +1276,7 @@ A balanced meal plate with fresh vegetables, fruits, whole grains, and protein f
 
 ---
 
-*— The Healthy Reporter 메인 에디터*</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774330960302&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774330960302,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774330960302,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774330960302,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774330960302)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774330960302)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774330960302" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774330960302" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774330960302)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774330960302&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div><div id="hi1774330730618" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774330730618&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774330730618" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 02:38</span><strong id="hk1774330730618" style="font-size:0.95rem;color:#1a1a2e;">비타민c</strong></div><div id="hp1774330730618" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "적당히 먹어도 소용없다?"… 비타민C의 진짜 효과와 놓치기 쉬운 흡수의 핵심 5가지
-
-본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다...</div></div></div><div id="hb1774330730618" style="display:none;padding:16px;border-top:1.5px solid #e0e0e0;"><div id="ht1774330730618" style="white-space:pre-wrap;font-size:0.9rem;line-height:1.8;"># "적당히 먹어도 소용없다?"… 비타민C의 진짜 효과와 놓치기 쉬운 흡수의 핵심 5가지
-
-본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련 판단은 전문 의료인과 상담하세요.
-
-## 도입부
-
-누구나 한 번쯤은 피곤하거나 감기 기운이 있을 때 "비타민C를 먹어야 한다"는 말을 들었을 것입니다. 오렌지 주스를 마시고, 종합 비타민을 챙기고, 때론 고용량 비타민C 보충제까지 찾는 사람들을 흔히 볼 수 있습니다. 비타민C는 면역력 강화의 상징처럼 여겨져 왔으며, 많은 사람들이 '많을수록 좋다'고 생각하는 경향이 있습니다.
-
-그러나 의외로 우리가 알고 있는 비타민C에 대한 상식 중 상당 부분은 불완전하거나 과장되어 있습니다. 같은 양의 비타민C를 섭취해도 사람에 따라 체내 흡수율이 크게 달라질 수 있으며, 섭취 방법과 타이밍, 그리고 함께 먹는 음식에 따라 효과가 극적으로 달라진다는 사실을 아는 사람은 많지 않습니다. 특히 비타민C는 수용성 비타민으로 과잉 섭취된 양은 소변으로 배출되기 때문에, 단순히 '많은 양'을 섭취하는 것만으로는 건강상 이점을 최대한 누릴 수 없습니다. 따라서 비타민C의 진정한 역할과 우리 몸에 효과적으로 흡수되는 방법을 정확히 이해하는 것이 중요합니다.
-
-## 관련 연구
-
-1. "Vitamin C and Immune Function" — American Journal of Clinical Nutrition, 2022
-2. "Bioavailability and Metabolism of Ascorbic Acid in Human Subjects" — Nutrients, 2021
-3. "The Effects of Timing and Food Interactions on Vitamin C Absorption" — Journal of Nutrition and Metabolism, 2023
-4. "Oxidative Stress and Vitamin C Supplementation: A Meta-Analysis" — Antioxidants, 2023
-
-## 본문
-
-### 1. 비타민C는 체내에서 만들어지지 않는 필수 영양소입니다
-
-비타민C, 즉 아스코르브산은 인체가 독립적으로 합성할 수 없는 필수 영양소입니다. 고등 포유동물의 대부분은 포도당으로부터 비타민C를 스스로 만들어낼 수 있는 효소를 가지고 있지만, 인간은 진화 과정에서 이 능력을 잃었습니다. 따라서 우리는 반드시 음식이나 보충제를 통해 비타민C를 공급받아야 합니다.
-
-비타민C의 하루 권장 섭취량은 성인 남성 90mg, 성인 여성 75mg입니다. 흡연자의 경우 권장량에 35mg을 더합니다. 일반적인 식단에서 신선한 채소와 과일을 충분히 섭취한다면 이 정도의 양은 어렵지 않게 충족될 수 있습니다. 다만 현대인들은 가공식품과 조리 과정에서 비타민C가 손실되기 쉽다는 점을 간과하곤 합니다. 비타민C는 열에 매우 취약해서 가열 조리 시 최대 90%까지 손실될 수 있으며, 공기 중 산소 노출과 시간의 경과에 따라서도 빠르게 파괴됩니다. 따라서 같은 양의 채소라도 조리 방법에 따라 실제 비타민C 섭취량은 크게 달라질 수 있습니다.
-
-### 2. 비타민C의 주요 생리적 역할은 면역력보다 광범위합니다
-
-흔히 비타민C를 면역력 강화와만 연결 짓는 경향이 있지만, 실제로 비타민C의 생리적 역할은 훨씬 더 광범위합니다. **비타민C는 우리 몸에서 약 300개 이상의 효소 반응에 관여**하고 있으며, 특히 콜라겐 합성에서 절대적인 역할을 합니다. 콜라겐은 피부, 뼈, 연골, 혈관벽을 구성하는 주요 단백질로, 비타민C 없이는 안정적인 콜라겐 구조를 유지할 수 없습니다.
-
-또한 비타민C는 강력한 항산화 물질로 작용하여 자유라디칼로 인한 세포 손상을 줄이는 데 도움을 줍니다. 이는 노화 방지, 만성 질환 예방과 관련이 있습니다. 비타민C는 철분의 흡수를 크게 증가시키는 역할도 합니다. 특히 식물성 식품에 포함된 비헴철(non-heme iron)은 흡수율이 낮은데, 비타민C와 함께 섭취하면 흡수율이 3배 이상 높아질 수 있습니다. 이 외에도 신경전달물질 생성, 스트레스 호르몬 조절, 뼈 건강 유지 등 다양한 생리 기능에 관여합니다. 따라서 비타민C는 단순히 감기 예방을 위한 영양소가 아니라, 전반적인 건강 유지에 필수적인 물질입니다.
-
-### 3. 비타민C의 흡수율은 섭취량에 따라 급격하게 감소합니다
-
-흥미로운 점은 비타민C의 생체이용률(몸에서 실제로 활용되는 비율)이 섭취량에 따라 크게 달라진다는 것입니다. 일반적으로 250mg 이하의 비타민C를 섭취할 때는 약 90% 이상이 장에서 흡수됩니다. 그러나 섭취량이 증가할수록 흡수율은 급격하게 떨어집니다. 1000mg을 섭취할 때는 약 50% 수준으로 떨어지며, 2000mg 이상을 섭취할 때는 20% 미만만 실제로 흡수됩니다.
-
-이는 **비타민C가 수용성 비타민**이기 때문입니다. 우리 몸은 한 번에 흡수할 수 있는 비타민C의 양이 제한되어 있으며, 초과분은 소변으로 배출됩니다. 따라서 고용량의 비타민C 보충제를 한 번에 많이 섭취하는 것보다, 적절한 양을 여러 번에 나누어 섭취하는 것이 더 효율적입니다. 또한 과도한 비타민C 섭취는 설사, 복부 불편감, 신장 결석 위험 증가 등의 부작용을 초래할 수 있습니다. 특히 신장 질환이 있는 사람이나 철 대사 이상이 있는 사람은 과도한 비타민C 섭취가 더욱 위험할 수 있으므로 주의가 필요합니다.
-
-### 4. 음식과의 상호작용이 비타민C 흡수에 큰 영향을 미칩니다
-
-비타민C의 흡수 효율은 함께 섭취하는 음식의 종류와 상태에 따라 크게 영향을 받습니다. **비타민C는 산성 환경에서 더 잘 흡수되므로**, 신맛이 나는 음식과 함께 섭취하면 흡수가 촉진됩니다. 레몬, 라임, 식초 같은 산성 음식과 함께 비타민C 식품을 섭취하면 위장의 산도가 높아져 비타민C의 흡수가 개선됩니다.
-
-반대로 주의해야 할 상호작용도 있습니다. 차나 커피에 포함된 탄닌 성분은 비타민C의 흡수를 방해합니다. 특히 식사 직후에 진한 차를 마시면 그 식사에서 섭취한 비타민C의 흡수율이 30% 이상 저하될 수 있습니다. 마찬가지로 칼슘 보충제와 비타민C를 동시에 섭취하면 상호 흡수를 방해할 수 있으므로, 최소 2시간 간격을 두고 섭취하는 것이 권장됩니다. 지방이 많은 음식은 상대적으로 비타민C 흡수를 지연시킬 수 있지만, 완전히 방해하지는 않습니다. 따라서 비타민C 식품을 섭취할 때는 가능한 한 방해 물질을 피하고, 산성 음식과의 조합을 고려하는 것이 현명합니다.
-
-### 5. 신선도와 조리 방법이 식품 속 비타민C 함량을 결정합니다
-
-식품에서 비타민C를 효과적으로 얻으려면 신선도와 조리 방법이 가장 중요합니다. 비타민C는 채집 후 시간이 경과할수록 빠르게 감소합니다. 상온에 보관된 채소의 비타민C는 며칠 내에 절반 이상 손실될 수 있으며, 냉장 보관해도 2주 이상 보관하면 상당 부분이 파괴됩니다. 또한 흙에서 채취한 직후부터 산화 과정이 시작되므로, 가능한 한 빠르게 섭취하거나 적절히 냉동 보관하는 것이 좋습니다.
-
-조리 방법도 매우 중요합니다. 높은 온도의 가열 조리는 비타민C를 거의 완전히 파괴합니다. 끓인 채소의 비타민C는 최대 90%까지 손실될 수 있습니다. 따라서 비타민C의 섭취를 목표로 한다면 생 채소와 과일을 직접 먹는 것이 가장 효과적입니다. 살짝 데치거나 스팀 조리는 비교적 비타민C 손실이 적은 방법입니다. 샐러드, 신선한 과일, 날 채소 스틱 같은 형태로 섭취하면 최대의 비타민C를 얻을 수 있습니다. 또한 냉동 채소와 과일은 수확 직후 냉동 처리되므로 신선한 형태의 신선 제품보다 오히려 비타민C 함량이 높을 수 있다는 점도 참고할 만합니다.
-
-## 이미지 제안
-
-**이미지 제안 1**
-- 위치: 도입부 뒤
-- 용도: 공감형 / 건강 개념
-- 설명: 다양한 비타민C 식품(오렌지, 키위, 파프리카, 브로콜리 등)을 신선하게 담은 이미지로 본문의 필수 영양소 개념을 시각적으로 표현합니다.
-- AI 이미지 프롬프트: Assorted fresh citrus fruits, berries, and colorful vegetables rich in vitamin C arranged on a light wooden table, natural lighting, minimalist food photography, editorial blog style, soft shadows, high-quality details.
-
-**이미지 제안 2**
-- 위치: 본문 중간 (3~4번 항목 사이)
-- 용도: 생활습관 / 식품 조리
-- 설명: 생 야채와 조리된 야채를 비교하는 이미지로 조리 방법에 따른 영양가 변화를 시각적으로 전달합니다.
-- AI 이미지 프롬프트: Fresh raw vegetables versus cooked vegetables side by side, showcasing cooking method differences, natural lighting, clean white background, minimalist presentation, documentary food photography style.
-
-**이미지 제안 3**
-- 위치: 마무리 전
-- 용도: 건강한 일상 / 식습관
-- 설명: 신선한 과일과 채소를 포함한 균형 잡힌 식단 이미지로 마무리의 "균형 잡힌 식단"이라는 메시지를 강화합니다.
-- AI 이미지 프롬프트: Balanced meal plate with fresh vegetables, fruits, grains, and lean protein, natural daylight, soft focus background, wellness lifestyle concept, editorial health blog photography, inviting and realistic presentation.
-
-## 마무리
-
-비타민C는 우리 몸의 건강을 유지하기 위한 필수 영양소이지만, 단순히 많은 양을 섭취한다고 해서 효과가 증대되는 것은 아닙니다. 흡수율의 한계, 조리 방법에 따른 손실, 그리고 함께 섭취하는 음식과의 상호작용 등 다양한 요소들이 비타민C의 실제 효과를 결정합니다. 신선한 식품을 적절한 방법으로 섭취하고, 하루 권장량에 맞춰 균형 있게 섭취하는 것이 비타민C의 최대 효과를 얻는 방법입니다. **특정 영양소 하나만 과도하게 섭취하기보다는, 다양한 과일과 채소를 포함한 균형 잡힌 식단과 규칙적인 생활 습관이 궁극적인 건강 관리의 핵심**임을 기억하는 것이 중요합니다. 비타민C를 포함한 모든 영양소는 상호작용하며, 이들이 함께 조화를 이룰 때 우리의 몸이 최적의 상태를 유지할 수 있다는 점을 잊지 말아야 합니다.
-
----
-
-*— The Healthy Reporter 메인 에디터*</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774330730618&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774330730618,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774330730618,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774330730618,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774330730618)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774330730618)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774330730618" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774330730618" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774330730618)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774330730618&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div><div id="hi1774330584835" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774330584835&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774330584835" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 02:36</span><strong id="hk1774330584835" style="font-size:0.95rem;color:#1a1a2e;">비타민c</strong></div><div id="hp1774330584835" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "많이 먹어도 소용없다?" 비타민C 흡수율의 진짜 기준 4가지
+*— The Healthy Reporter 메인 에디터*</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774330960302&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774330960302,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774330960302,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774330960302,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774330960302)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774330960302)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774330960302" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774330960302" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774330960302)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774330960302&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div><div id="hi1774330584835" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774330584835&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774330584835" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 02:36</span><strong id="hk1774330584835" style="font-size:0.95rem;color:#1a1a2e;">비타민c</strong></div><div id="hp1774330584835" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "많이 먹어도 소용없다?" 비타민C 흡수율의 진짜 기준 4가지
 
 ---
 
@@ -1510,90 +1359,7 @@ A balanced meal plate with fresh vegetables, fruits, whole grains, and protein f
 
 ---
 
-— The Healthy Reporter 메인 에디터</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774330584835&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774330584835,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774330584835,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774330584835,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774330584835)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774330584835)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774330584835" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774330584835" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774330584835)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774330584835&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div><div id="hi1774328866338" style="border:1.5px solid #e0e0e0;border-radius:10px;margin-bottom:10px;overflow:hidden;"><div onclick="var b=document.getElementById(&#39;hb1774328866338&#39;);b.style.display=b.style.display===&#39;block&#39;?&#39;none&#39;:&#39;block&#39;" style="display:flex;align-items:flex-start;padding:12px 16px;background:#fafafa;cursor:pointer;"><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;"><span id="hd1774328866338" style="font-size:0.75rem;background:#ede9ff;color:#6c63ff;padding:2px 8px;border-radius:99px;font-weight:600;">2026. 03. 24. 오후 02:07</span><strong id="hk1774328866338" style="font-size:0.95rem;color:#1a1a2e;">아세로라</strong></div><div id="hp1774328866338" style="font-size:0.78rem;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"># "비타민C 많은 과일"이라고 생각했는데… 아세로라의 진짜 가치 5가지
-
-본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련 판...</div></div></div><div id="hb1774328866338" style="display:none;padding:16px;border-top:1.5px solid #e0e0e0;"><div id="ht1774328866338" style="white-space:pre-wrap;font-size:0.9rem;line-height:1.8;"># "비타민C 많은 과일"이라고 생각했는데… 아세로라의 진짜 가치 5가지
-
-본 콘텐츠는 의학적 진단 및 치료를 대체하지 않습니다. 건강 관련 판단은 전문 의료인과 상담하세요.
-
----
-
-## 도입부
-
-비타민C가 풍부한 과일을 떠올릴 때 대부분 오렌지나 키위를 먼저 생각합니다. 상큼한 맛의 이들 과일은 대중적이고 구하기 쉬워 일상적으로 섭취하는 사람들이 많습니다.
-
-하지만 영양학적 관점에서 보면, 아세로라는 비타민C 함량만으로도 일반적인 감귤류의 10배 이상을 자랑합니다. 더욱 흥미로운 점은 단순히 비타민C만 많은 것이 아니라, 함께 들어있는 항산화 성분과 생체이용률(실제 흡수되는 비율)에서도 독특한 가치를 지닌다는 사실입니다. 아세로라가 건강 식품 시장에서 점차 주목받는 이유가 여기에 있습니다.
-
----
-
-## 관련 연구
-
-1. "Nutritional Composition and Bioactive Compounds in Acerola (Malpighia emarginata): A Review" — Food Research International, 2021
-2. "Antioxidant Activity and Vitamin C Content in Different Genotypes of Acerola Fruit" — Journal of Agricultural and Food Chemistry, 2020
-3. "Comparative Study of Bioavailability: Ascorbic Acid from Natural Sources vs. Synthetic Supplements" — Nutrition Reviews, 2019
-4. "Polyphenolic Profile and Health Benefits of Acerola Cherry Extract" — Phytotherapy Research, 2022
-
----
-
-## 본문
-
-### 1. 일반 과일보다 10배 이상 높은 비타민C 함량
-
-**아세로라는 100g당 1,500~4,000mg의 비타민C를 함유하고 있습니다.** 같은 무게의 오렌지(약 53mg)나 딸기(약 59mg)와 비교하면 압도적인 차이입니다. 이는 단순히 숫자의 문제가 아니라, 면역계 강화, 콜라겐 생성, 세포 손상 방지 등 비타민C가 담당하는 다양한 역할을 효율적으로 수행할 수 있다는 의미입니다.
-
-특히 스트레스가 많거나 계절 변화로 감기에 취약한 시기에 소량의 아세로라만으로도 일일 권장량을 충족할 수 있습니다. 다만 신선한 아세로라는 보관 기간이 짧아 분말이나 농축액 형태로 섭취하는 경우가 많습니다.
-
-### 2. 식물성 항산화 성분의 복합적 작용
-
-아세로라에는 비타민C 외에도 안토시아닌, 플라보노이드, 폴리페놀 같은 항산화 성분이 풍부합니다. **이들 성분은 세포 손상을 유발하는 자유라디칼을 제거하는 방어 기전으로 작용합니다.** 
-
-특히 주목할 점은 이러한 항산화 성분들이 비타민C와 함께 시너지 효과를 낸다는 사실입니다. 아세로라 속 항산화 물질들은 비타민C의 효능을 보호하고 체내 흡수를 돕습니다. 따라서 합성 비타민C 보충제만 섭취하는 것과는 다른 종합적인 건강상 이점을 기대할 수 있습니다.
-
-### 3. 높은 생체이용률로 실제 흡수 효율이 우수함
-
-영양소의 함량만큼 중요한 것이 실제 흡수율입니다. 아세로라의 비타민C는 천연 과일에서 유래했기 때문에 합성 비타민C보다 체내 흡수 및 이용률이 높은 것으로 알려져 있습니다.
-
-특히 아세로라에 함유된 유기산(말산, 구연산)은 비타민C의 흡수를 촉진하고, 동시에 포만감을 주어 과다 섭취를 자연스럽게 제한합니다. 이는 수용성 비타민인 비타민C의 과잉 섭취 위험을 줄이면서도 필요한 양을 충분히 공급할 수 있다는 뜻입니다.
-
-### 4. 피부 건강과 항노화 관점에서의 가치
-
-비타민C는 콜라겐 생성에 필수적인 영양소입니다. **아세로라는 높은 비타민C와 항산화 성분으로 인해 피부 탄력 유지와 주름 예방에 도움을 줄 수 있습니다.**
-
-또한 자외선으로 인한 산화 스트레스로부터 피부 세포를 보호하는 기능도 있습니다. 이 때문에 아세로라 추출물은 건강기능식품뿐 아니라 스킨케어 제품 성분으로도 활용되고 있습니다. 다만 피부 개선은 장기적 섭취와 함께 자외선 차단, 충분한 수분 공급 등 통합적 관리가 필요합니다.
-
-### 5. 소화 건강과 신진대사 촉진
-
-아세로라는 식이섬유도 함유하고 있어 장 건강을 지원합니다. 비타민C의 항산화 기능과 함께 소화 기관의 건강한 환경을 유지하는 데 도움을 줄 수 있습니다.
-
-또한 아세로라에 있는 각종 영양소는 신진대사 효율을 높이는 데 기여합니다. 특히 에너지 대사와 면역 반응에 관여하는 B군 비타민과의 상호작용으로 전반적인 신체 활력을 지원할 수 있습니다. 다만 아세로라만으로 신진대사를 크게 바꾸기는 어려우며, 규칙적인 운동과 균형 잡힌 식단이 함께해야 효과적입니다.
-
----
-
-## 이미지 제안
-
-**이미지 제안 #1**
-- 위치: 도입부 뒤
-- 용도: 식품
-- 설명: 신선한 아세로라 열매와 단면을 보여주며 본문의 영양가 이야기와 연결
-- AI 이미지 프롬프트: Fresh acerola cherry fruits, whole and cut in half, natural lighting, soft neutral background, editorial food photography style, realistic texture
-
-**이미지 제안 #2**
-- 위치: 본문 중간 (항산화 성분 설명 후)
-- 용도: 식품/성분
-- 설명: 아세로라 분말이나 농축액을 담은 유리잔, 건강한 음료 같은 일상 섭취 장면
-- AI 이미지 프롬프트: Glass of acerola powder drink or juice, natural morning light, wooden table, minimalist healthy lifestyle, candid and realistic
-
----
-
-## 마무리
-
-아세로라는 단순히 비타민C가 많은 과일을 넘어, 항산화 성분의 복합적 시너지와 높은 생체이용률을 갖춘 영양 식품입니다. 피부 건강, 면역 강화, 항노화 관점에서 현대인의 건강 관리에 실질적 도움을 줄 수 있습니다. 
-
-다만 아세로라 하나만으로 건강을 완성할 수 없다는 점을 명심해야 합니다. **규칙적인 운동, 충분한 수면, 다양한 식품을 포함한 균형 잡힌 식단 속에서 아세로라를 보조적으로 활용할 때 진정한 건강상 이점을 얻을 수 있습니다.**
-
----
-
-— The Healthy Reporter 메인 에디터</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774328866338&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774328866338,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774328866338,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774328866338,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774328866338)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774328866338)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774328866338" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774328866338" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774328866338)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774328866338&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div></div>
+— The Healthy Reporter 메인 에디터</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #f0f0f0;"><button onclick="navigator.clipboard.writeText(document.getElementById(&#39;ht1774330584835&#39;).textContent).then(function(){toast(&#39;📋 복사됨&#39;)})" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d4c5ff;background:#f0eeff;color:#6c63ff;cursor:pointer;font-weight:500;">📋 복사</button><button onclick="dlHistoryById(1774330584835,&#39;txt&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:500;">📄 TXT</button><button onclick="dlHistoryById(1774330584835,&#39;word&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #bfdbfe;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:500;">📝 Word</button><button onclick="setReviewStatus(1774330584835,&#39;requested&#39;)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fde68a;background:#fefce8;color:#ca8a04;cursor:pointer;">🔔 검수요청</button><button onclick="toggleEditPanel(1774330584835)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fed7aa;background:#fff7ed;color:#ea580c;cursor:pointer;font-weight:500;">✏️ 편집</button><button onclick="deleteHistory(1774330584835)" style="font-size:0.8rem;padding:5px 10px;border-radius:6px;border:1.5px solid #fee2e2;background:#fff5f5;color:#e53e3e;cursor:pointer;font-weight:500;margin-left:auto;">🗑️ 삭제</button></div><div id="ep1774330584835" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;"><textarea id="ea1774330584835" style="width:100%;min-height:200px;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px;font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="saveHistoryEdit(1774330584835)" style="padding:8px 16px;background:#6c63ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">💾 저장</button><button onclick="document.getElementById(&#39;ep1774330584835&#39;).style.display=&#39;none&#39;" style="padding:8px 16px;background:#f0f0f0;color:#666;border:none;border-radius:8px;cursor:pointer;">✕ 취소</button></div></div></div></div></div>
     </div>
   </div><!-- end panel-history -->
 
@@ -1626,6 +1392,27 @@ A balanced meal plate with fresh vegetables, fruits, whole grains, and protein f
     <div class="pw-error" id="pwSetError"></div>
     <button class="btn-pw-ok" onclick="setPassword()">저장</button>
     <button class="btn-pw-cancel" onclick="document.getElementById(&#39;pwSetOverlay&#39;).classList.add(&#39;hidden&#39;)">취소</button>
+  </div>
+</div>
+
+<!-- 편집 모달 -->
+<div class="edit-modal-overlay hidden" id="editModal">
+  <div class="edit-modal-box">
+    <div class="edit-modal-header">
+      <div>
+        <div class="edit-modal-title">✏️ 내용 편집</div>
+        <div class="edit-modal-kw" id="editModalKw">비타민c</div>
+      </div>
+      <button class="edit-modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="edit-modal-body">
+      <textarea id="editModalTA" oninput="updateEditCharCount()" placeholder="내용을 편집하세요..."></textarea>
+    </div>
+    <div class="edit-modal-footer">
+      <div class="edit-modal-char" id="editModalChar">7,934자</div>
+      <button class="btn-cancel-edit" onclick="closeEditModal()">취소</button>
+      <button class="btn-save-edit" onclick="saveEditModal()">💾 저장</button>
+    </div>
   </div>
 </div>
 
@@ -2367,12 +2154,45 @@ A balanced meal plate with fresh vegetables, fruits, whole grains, and protein f
     }
   }
 
+  var _editModalId = null;
+
   function toggleEditPanel(id) {
-    var ep = document.getElementById('ep' + id);
-    if (!ep) return;
-    var hb = document.getElementById('hb' + id);
-    if (hb) hb.style.display = 'block';
-    ep.style.display = ep.style.display === 'block' ? 'none' : 'block';
+    _editModalId = id;
+    var arr = loadHistory();
+    var item = arr.find(function(i){ return i.id === id; });
+    if (!item) return;
+    document.getElementById('editModalKw').textContent = item.keyword || '';
+    var ta = document.getElementById('editModalTA');
+    ta.value = item.content || '';
+    updateEditCharCount();
+    document.getElementById('editModal').classList.remove('hidden');
+    setTimeout(function(){ ta.focus(); }, 100);
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+    _editModalId = null;
+  }
+
+  function updateEditCharCount() {
+    var ta = document.getElementById('editModalTA');
+    var charEl = document.getElementById('editModalChar');
+    if (charEl) charEl.textContent = (ta.value.length).toLocaleString() + '자';
+  }
+
+  function saveEditModal() {
+    if (!_editModalId) return;
+    var newContent = document.getElementById('editModalTA').value.trim();
+    if (!newContent) { alert('내용이 비어있습니다.'); return; }
+    var arr = loadHistory();
+    var idx = arr.findIndex(function(i){ return i.id === _editModalId; });
+    if (idx < 0) return;
+    arr[idx].content = newContent;
+    arr[idx].editedAt = new Date().toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    storeHistory(arr);
+    closeEditModal();
+    renderHistory();
+    toast('💾 수정 저장됨');
   }
 
   function deleteHistory(id) {
@@ -2456,6 +2276,14 @@ A balanced meal plate with fresh vegetables, fruits, whole grains, and protein f
     refreshAllMemberSelects();
     toast('🗑️ ' + val + ' 삭제됨');
   }
+
+  // ── 편집 모달: ESC 키 & 배경 클릭으로 닫기 ──
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeEditModal();
+  });
+  document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEditModal();
+  });
 
   // ── 초기화 ──
   const savedProvider = localStorage.getItem('llm_provider') || 'claude';
